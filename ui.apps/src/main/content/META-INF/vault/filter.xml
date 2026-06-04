@@ -3,4 +3,6 @@
     <filter root="/apps/myproject/clientlibs"/>
     <filter root="/apps/myproject/components"/>
     <filter root="/apps/myproject/i18n"/>
+
+    <filter root="/apps/myproject"/>    <!--this is adding for the mail-templates allow crxde-->
 </workspaceFilter>
