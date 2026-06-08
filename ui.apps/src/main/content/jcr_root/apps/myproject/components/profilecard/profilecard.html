@@ -1,0 +1,30 @@
+<sly data-sly-use.model="com.myproject.core.models.ProfileCardModel">
+
+    <sly data-sly-use.clientlib="/libs/granite/sightly/templates/clientlib.html"
+         data-sly-call="${clientlib.css @ categories='myproject.components.profilecard'}"/>
+    
+    <div class="cmp-profile-card">
+        
+        <img class="cmp-profile-card__image" src="${model.finalImagePath}" alt="Profile Picture"/>
+        
+        <h3 class="cmp-profile-card__name">${model.fullName @ context='text'}</h3>
+        
+        <div data-sly-test="${model.skillsArray}" class="cmp-profile-card__skills">
+            <h4 class="cmp-profile-card__skills-title">Technical Skills:</h4>
+            <ul class="cmp-profile-card__skills-list">
+                <li data-sly-list.skill="${model.skillsArray}" class="cmp-profile-card__skill-item">
+                    ${skill}
+                </li>
+            </ul>
+        </div>
+
+        <div data-sly-test="${!model.skillsArray}">
+            <p>No skills updated.</p>
+        </div>
+        
+    </div>
+
+</sly>
+
+<sly data-sly-use.templates="core/wcm/components/commons/v1/templates.html"
+     data-sly-call="${templates.placeholder @ isEmpty=!model.fullName, classAppend='cq-dd-image'}"></sly>

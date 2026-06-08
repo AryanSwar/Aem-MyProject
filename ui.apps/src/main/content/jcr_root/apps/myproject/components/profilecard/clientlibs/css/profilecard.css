@@ -1,0 +1,43 @@
+/* Component Specific CSS */
+.cmp-profile-card {
+    border: 1px solid #ccc;
+    padding: 20px;
+    max-width: 300px;
+    text-align: center;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.cmp-profile-card__image {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 15px;
+}
+
+.cmp-profile-card__name {
+    font-size: 24px;
+    margin-bottom: 10px;
+    color: #ffffff;
+}
+
+.cmp-profile-card__skills-title {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+.cmp-profile-card__skills-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.cmp-profile-card__skill-item {
+    background: #eee;
+    margin: 5px 0;
+    padding: 8px;
+    border-radius: 4px;
+    font-weight: bold;
+    color: #0056b3;
+}
