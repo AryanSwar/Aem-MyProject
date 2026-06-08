@@ -39,7 +39,7 @@ public class AssetExpiryScheduler implements Runnable {
     private AssetEmailService assetEmailService;
 
     // Run everyday at 1:00 AM
-    private static final String CRON_EXPRESSION = "0 * * * * ?"; 
+    private static final String CRON_EXPRESSION = ""; //"0 * * * * ?" pass inside double cott's
 
     @Activate
     protected void activate() {
