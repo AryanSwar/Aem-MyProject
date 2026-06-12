@@ -5,4 +5,8 @@
     <filter root="/apps/myproject/i18n"/>
 
     <filter root="/apps/myproject"/>    <!--this is adding for the mail-templates allow crxde-->
+
+    <filter root="/apps/cq/core/content/nav/translation"/>   <!--adding for the translation  icon and globe -->
+    <filter root="/apps/cq"/>
+
 </workspaceFilter>
