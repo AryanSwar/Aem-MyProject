@@ -11,5 +11,8 @@
 
     <filter root="/conf/global/settings/dam/adminui-extension/metadataschema/employee-schema" mode="merge"/> <!-- for metadata schema creation-->
 
-    <filter root="/conf/global/settings/dam/adminui-extension/metadataschema/employee-form" mode="merge"/>
+    <filter root="/conf/global/settings/dam/adminui-extension/metadataschema/employee-form" mode="merge"/> <!-- for metadata schema creation-->
+
+
+    <filter root="/conf/global/settings/dam/search/facets/assets" mode="merge"/> <!--for creating search filter-->
 </workspaceFilter>
