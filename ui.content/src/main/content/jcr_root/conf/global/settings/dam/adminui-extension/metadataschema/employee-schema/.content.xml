@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:granite="http://www.adobe.com/jcr/granite/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
+    jcr:primaryType="sling:Folder">
+    
+    <jcr:content
+        jcr:primaryType="nt:unstructured"
+        sling:resourceType="dam/gui/components/admin/schema"
+        jcr:title="Employee Schema"/>
+        
+    <items jcr:primaryType="nt:unstructured">
+        <tabs
+            jcr:primaryType="nt:unstructured"
+            sling:resourceType="granite/ui/components/coral/foundation/tabs">
+            <items jcr:primaryType="nt:unstructured">
+                
+                <tab1
+                    jcr:primaryType="nt:unstructured"
+                    jcr:title="Personal Details"
+                    sling:resourceType="granite/ui/components/coral/foundation/container">
+                    <items jcr:primaryType="nt:unstructured">
+                        <col1
+                            jcr:primaryType="nt:unstructured"
+                            sling:resourceType="granite/ui/components/coral/foundation/container">
+                            <items jcr:primaryType="nt:unstructured">
+                                
+                                <employeeId jcr:primaryType="nt:unstructured" sling:resourceType="dam/gui/components/admin/schemafield" fieldLabel="Employee ID" name="./jcr:content/metadata/employeeId" resourceType="granite/ui/components/coral/foundation/form/textfield"/>
+                                <firstName jcr:primaryType="nt:unstructured" sling:resourceType="dam/gui/components/admin/schemafield" fieldLabel="First Name" name="./jcr:content/metadata/firstName" resourceType="granite/ui/components/coral/foundation/form/textfield"/>
+                                <lastName jcr:primaryType="nt:unstructured" sling:resourceType="dam/gui/components/admin/schemafield" fieldLabel="Last Name" name="./jcr:content/metadata/lastName" resourceType="granite/ui/components/coral/foundation/form/textfield"/>
+                                <fullName jcr:primaryType="nt:unstructured" sling:resourceType="dam/gui/components/admin/schemafield" fieldLabel="Full Name" name="./jcr:content/metadata/fullName" resourceType="granite/ui/components/coral/foundation/form/textfield"/>
+                                
+                                <gender
+                                    jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="dam/gui/components/admin/schemafield"
+                                    fieldLabel="Gender"
+                                    name="./jcr:content/metadata/gender"
+                                    resourceType="granite/ui/components/coral/foundation/form/select">
+                                    <items jcr:primaryType="nt:unstructured">
+                                        <male jcr:primaryType="nt:unstructured" text="Male" value="male"/>
+                                        <female jcr:primaryType="nt:unstructured" text="Female" value="female"/>
+                                        <other jcr:primaryType="nt:unstructured" text="Other" value="other"/>
+                                    </items>
+                                </gender>
+
+                                <dateOfBirth jcr:primaryType="nt:unstructured" sling:resourceType="dam/gui/components/admin/schemafield" fieldLabel="Date of Birth" name="./jcr:content/metadata/dateOfBirth" resourceType="granite/ui/components/coral/foundation/form/datepicker" type="date"/>
+
+                                <maritalStatus
+                                    jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="dam/gui/components/admin/schemafield"
+                                    fieldLabel="Marital Status"
+                                    name="./jcr:content/metadata/maritalStatus"
+                                    resourceType="granite/ui/components/coral/foundation/form/select">
+                                    <items jcr:primaryType="nt:unstructured">
+                                        <single jcr:primaryType="nt:unstructured" text="Single" value="single"/>
+                                        <married jcr:primaryType="nt:unstructured" text="Married" value="married"/>
+                                        <divorced jcr:primaryType="nt:unstructured" text="Divorced" value="divorced"/>
+                                        <widowed jcr:primaryType="nt:unstructured" text="Widowed" value="widowed"/>
+                                    </items>
+                                </maritalStatus>
+
+                                <nationality jcr:primaryType="nt:unstructured" sling:resourceType="dam/gui/components/admin/schemafield" fieldLabel="Nationality" name="./jcr:content/metadata/nationality" resourceType="granite/ui/components/coral/foundation/form/textfield"/>
+
+                                <bloodGroup
+                                    jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="dam/gui/components/admin/schemafield"
+                                    fieldLabel="Blood Group"
+                                    name="./jcr:content/metadata/bloodGroup"
+                                    resourceType="granite/ui/components/coral/foundation/form/select">
+                                    <items jcr:primaryType="nt:unstructured">
+                                        <ap jcr:primaryType="nt:unstructured" text="A+" value="A+"/>
+                                        <an jcr:primaryType="nt:unstructured" text="A-" value="A-"/>
+                                        <bp jcr:primaryType="nt:unstructured" text="B+" value="B+"/>
+                                        <bn jcr:primaryType="nt:unstructured" text="B-" value="B-"/>
+                                        <op jcr:primaryType="nt:unstructured" text="O+" value="O+"/>
+                                        <on jcr:primaryType="nt:unstructured" text="O-" value="O-"/>
+                                        <abp jcr:primaryType="nt:unstructured" text="AB+" value="AB+"/>
+                                        <abn jcr:primaryType="nt:unstructured" text="AB-" value="AB-"/>
+                                    </items>
+                                </bloodGroup>
+
+                            </items>
+                        </col1>
+                    </items>
+                </tab1>
+
+                <tab2
+                    jcr:primaryType="nt:unstructured"
+                    jcr:title="Contact &amp; Employment"
+                    sling:resourceType="granite/ui/components/coral/foundation/container">
+                    <items jcr:primaryType="nt:unstructured">
+                        <col1
+                            jcr:primaryType="nt:unstructured"
+                            sling:resourceType="granite/ui/components/coral/foundation/container">
+                            <items jcr:primaryType="nt:unstructured">
+                                
+                                <email jcr:primaryType="nt:unstructured" sling:resourceType="dam/gui/components/admin/schemafield" fieldLabel="Email Address" name="./jcr:content/metadata/email" resourceType="granite/ui/components/coral/foundation/form/textfield"/>
+                                <mobileNumber jcr:primaryType="nt:unstructured" sling:resourceType="dam/gui/components/admin/schemafield" fieldLabel="Mobile Number" name="./jcr:content/metadata/mobileNumber" resourceType="granite/ui/components/coral/foundation/form/textfield"/>
+                                
+                                <address jcr:primaryType="nt:unstructured" sling:resourceType="dam/gui/components/admin/schemafield" fieldLabel="Address" name="./jcr:content/metadata/address" resourceType="granite/ui/components/coral/foundation/form/textarea"/>
+                                
+                                <city jcr:primaryType="nt:unstructured" sling:resourceType="dam/gui/components/admin/schemafield" fieldLabel="City" name="./jcr:content/metadata/city" resourceType="granite/ui/components/coral/foundation/form/textfield"/>
+                                <country jcr:primaryType="nt:unstructured" sling:resourceType="dam/gui/components/admin/schemafield" fieldLabel="Country" name="./jcr:content/metadata/country" resourceType="granite/ui/components/coral/foundation/form/textfield"/>
+                                <postalCode jcr:primaryType="nt:unstructured" sling:resourceType="dam/gui/components/admin/schemafield" fieldLabel="Postal Code" name="./jcr:content/metadata/postalCode" resourceType="granite/ui/components/coral/foundation/form/textfield"/>
+                                
+                                <employeeSalary jcr:primaryType="nt:unstructured" sling:resourceType="dam/gui/components/admin/schemafield" fieldLabel="Employee Salary" name="./jcr:content/metadata/employeeSalary" resourceType="granite/ui/components/coral/foundation/form/numberfield"/>
+
+                            </items>
+                        </col1>
+                    </items>
+                </tab2>
+
+            </items>
+        </tabs>
+    </items>
+</jcr:root>

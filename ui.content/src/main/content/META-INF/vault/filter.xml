@@ -8,4 +8,8 @@
     </filter>
     <filter root="/content/dam/myproject/asset.jpg" mode="merge"/>
     <filter root="/content/experience-fragments/myproject" mode="merge"/>
+
+    <filter root="/conf/global/settings/dam/adminui-extension/metadataschema/employee-schema" mode="merge"/> <!-- for metadata schema creation-->
+
+    <filter root="/conf/global/settings/dam/adminui-extension/metadataschema/employee-form" mode="merge"/>
 </workspaceFilter>
