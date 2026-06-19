@@ -71,6 +71,11 @@
                             <artifactId>core.wcm.components.config</artifactId>
                         </dependency>
                     </dependencies>
+
+                    
+                    <!-- adding for indexing in codebase -->
+                    <packageType>mixed</packageType>
+                    <allowIndexDefinitions>true</allowIndexDefinitions>
                 </configuration>
             </plugin>
             <plugin>

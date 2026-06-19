@@ -53,7 +53,7 @@
                 fieldLabel="Property Predicate"
                 listOrder="26"
                 metaType="property"
-                name="jcr:content/metadata/firstName"
+                name="jcr:content/metadata/fullName"
                 text="Full Name"/>
             <_x0031_781782615461
                 jcr:primaryType="nt:unstructured"
