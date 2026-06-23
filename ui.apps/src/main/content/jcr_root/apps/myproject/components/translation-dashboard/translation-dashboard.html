@@ -1,0 +1,33 @@
+<sly data-sly-use.clientlib="/libs/granite/sightly/templates/clientlib.html"/>
+<!DOCTYPE html>
+<html class="coral-App">
+<head>
+    <title>Translation Console</title>
+    <sly data-sly-call="${clientlib.all @ categories='coralui3'}"/>
+    <sly data-sly-call="${clientlib.all @ categories='myproject.translationconsole'}"/>
+</head>
+<body class="coral--light coral-Scrollable">
+    <div class="translation-console-wrapper">
+        <h1 class="coral-Heading coral-Heading--1">🌐 Global Translation Console</h1>
+        <p class="coral-Body--large">Translate your content directly from the AEM backend.</p>
+        <br>
+        <form id="translationForm">
+            <label class="coral-FieldLabel">Enter Text to Translate</label>
+            <textarea id="sourceText" class="coral-Textfield coral-Textfield--multiline" style="width: 100%; height: 100px;" required></textarea>
+            <br><br>
+            <label class="coral-FieldLabel">Select Target Language</label>
+            <select id="targetLang" class="coral-Select">
+                <option value="hi">Hindi</option>
+                <option value="es">Spanish</option>
+                <option value="fr">French</option>
+            </select>
+            <br><br>
+            <button type="button" id="translateBtn" class="coral-Button coral-Button--primary">Translate Now</button>
+        </form>
+        <div class="coral-Well translation-result-box" id="resultBox">
+            <h3 class="coral-Heading coral-Heading--3">Result:</h3>
+            <p id="outputText" class="coral-Body--large translation-output-text"></p>
+        </div>
+    </div>
+</body>
+</html>

@@ -11,4 +11,9 @@
 
 
     <filter root="/oak:index/damAssetLucene" mode="merge"/>  <!--for indexing-->
+
+
+
+    <filter root="/apps/myproject/components/translation-dashboard"/>   <!--for translation using-->
+    <filter root="/content/translation-console"/>    <!--for translation using-->
 </workspaceFilter>
