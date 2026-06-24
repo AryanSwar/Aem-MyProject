@@ -15,4 +15,8 @@
 
 
     <filter root="/conf/global/settings/dam/search/facets/assets" mode="merge"/> <!--for creating search filter-->
+
+    <filter root="/conf/global/settings/workflow/models/dynamic-content-approval"/> <!--for workflow model-->
+
+    <filter root="/conf/global/settings/workflow/launcher/config/myproject-product-launcher"/> <!--for launcher dynamic content approval-->
 </workspaceFilter>

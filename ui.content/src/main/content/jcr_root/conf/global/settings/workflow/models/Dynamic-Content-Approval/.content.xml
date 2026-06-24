@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+    jcr:primaryType="cq:Page">
+    <jcr:content
+        cq:designPath="/libs/settings/wcm/designs/default"
+        cq:lastModified="{Date}2026-06-23T18:33:17.334+05:30"
+        cq:lastModifiedBy="admin"
+        cq:template="/libs/cq/workflow/templates/model"
+        jcr:primaryType="cq:PageContent"
+        jcr:title="Dynamic Content Approval"
+        sling:resourceType="cq/workflow/components/pages/model">
+        <flow
+            jcr:primaryType="nt:unstructured"
+            sling:resourceType="foundation/components/parsys">
+            <process
+                jcr:created="{Date}2026-06-23T14:21:42.942+05:30"
+                jcr:createdBy="admin"
+                jcr:lastModified="{Date}2026-06-23T14:29:18.893+05:30"
+                jcr:lastModifiedBy="admin"
+                jcr:primaryType="nt:unstructured"
+                jcr:title="1. Evaluate Page Type"
+                sling:resourceType="cq/workflow/components/model/process">
+                <metaData
+                    jcr:primaryType="nt:unstructured"
+                    PROCESS="com.myproject.core.workflows.routing.DynamicWorkflowRouter"
+                    PROCESS_AUTO_ADVANCE="true"/>
+            </process>
+            <or
+                jcr:created="{Date}2026-06-23T14:31:17.279+05:30"
+                jcr:createdBy="admin"
+                jcr:lastModified="{Date}2026-06-23T18:10:29.660+05:30"
+                jcr:lastModifiedBy="admin"
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="cq/workflow/components/model/or"
+                branches="2"
+                branchName1="Branch 1"
+                branchName2="Branch 2"
+                branchOrder="[0,1]"
+                orSplit="true"
+                script1="function check() {&#xd;&#xa;    var flag = workflowData.getMetaDataMap().get(&quot;isProductPage&quot;);&#xd;&#xa;    if (flag == true || flag == &quot;true&quot; || flag == &quot;TRUE&quot;) {&#xd;&#xa;        return true;&#xd;&#xa;    }&#xd;&#xa;    return false;&#xd;&#xa;}"
+                script2="function check() {&#xd;&#xa;        return workflowData.getMetaDataMap().get(&quot;isProductPage&quot;, false) == false;&#xd;&#xa;    }">
+                <_x0031_
+                    jcr:primaryType="nt:unstructured"
+                    sling:resourceType="cq/flow/components/parsys">
+                    <dynamic_participant
+                        jcr:created="{Date}2026-06-23T14:34:34.603+05:30"
+                        jcr:createdBy="admin"
+                        jcr:lastModified="{Date}2026-06-23T18:25:22.495+05:30"
+                        jcr:lastModifiedBy="admin"
+                        jcr:primaryType="nt:unstructured"
+                        jcr:title="Content Owner Approval"
+                        sling:resourceType="cq/workflow/components/model/dynamic_participant">
+                        <metaData
+                            jcr:primaryType="nt:unstructured"
+                            DYNAMIC_PARTICIPANT="com.myproject.core.workflows.participants.DynamicApproverChooser"
+                            PROCESS_ARGS="CONTENT_OWNER"
+                            timeoutHandler="com.myproject.core.workflows.escalation.TimeoutEscalationProcess"
+                            timeoutMillis="1"/>
+                    </dynamic_participant>
+                    <dynamic_participant_457571606
+                        jcr:created="{Date}2026-06-23T14:34:37.946+05:30"
+                        jcr:createdBy="admin"
+                        jcr:lastModified="{Date}2026-06-23T18:33:09.602+05:30"
+                        jcr:lastModifiedBy="admin"
+                        jcr:primaryType="nt:unstructured"
+                        jcr:title="Legal Approval"
+                        sling:resourceType="cq/workflow/components/model/dynamic_participant">
+                        <metaData
+                            jcr:primaryType="nt:unstructured"
+                            DYNAMIC_PARTICIPANT="com.myproject.core.workflows.participants.DynamicApproverChooser"
+                            PROCESS_ARGS="LEGAL"
+                            timeoutHandler="com.myproject.core.workflows.escalation.TimeoutEscalationProcess"
+                            timeoutMillis="1"/>
+                    </dynamic_participant_457571606>
+                    <dynamic_participant_1548283122
+                        jcr:created="{Date}2026-06-23T14:34:40.077+05:30"
+                        jcr:createdBy="admin"
+                        jcr:lastModified="{Date}2026-06-23T18:33:17.323+05:30"
+                        jcr:lastModifiedBy="admin"
+                        jcr:primaryType="nt:unstructured"
+                        jcr:title="Marketing Approval"
+                        sling:resourceType="cq/workflow/components/model/dynamic_participant">
+                        <metaData
+                            jcr:primaryType="nt:unstructured"
+                            DYNAMIC_PARTICIPANT="com.myproject.core.workflows.participants.DynamicApproverChooser"
+                            PROCESS_ARGS="MARKETING"
+                            timeoutHandler="com.myproject.core.workflows.escalation.TimeoutEscalationProcess"
+                            timeoutMillis="1"/>
+                    </dynamic_participant_1548283122>
+                </_x0031_>
+                <_x0032_
+                    jcr:primaryType="nt:unstructured"
+                    sling:resourceType="cq/flow/components/parsys">
+                    <dynamic_participant
+                        jcr:created="{Date}2026-06-23T14:46:45.681+05:30"
+                        jcr:createdBy="admin"
+                        jcr:lastModified="{Date}2026-06-23T14:50:02.316+05:30"
+                        jcr:lastModifiedBy="admin"
+                        jcr:primaryType="nt:unstructured"
+                        jcr:title="Standard Content Approval"
+                        sling:resourceType="cq/workflow/components/model/dynamic_participant">
+                        <metaData
+                            jcr:primaryType="nt:unstructured"
+                            DYNAMIC_PARTICIPANT="com.myproject.core.workflows.participants.DynamicApproverChooser"
+                            PROCESS_ARGS="CONTENT_OWNER"
+                            timeoutHandler="com.myproject.core.workflows.escalation.TimeoutEscalationProcess"
+                            timeoutMillis="60000"/>
+                    </dynamic_participant>
+                </_x0032_>
+            </or>
+        </flow>
+    </jcr:content>
+</jcr:root>

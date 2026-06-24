@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0"
+    jcr:primaryType="cq:WorkflowLauncher"
+    condition=""
+    conditions="[]"
+    description="Auto trigger for pages"
+    disabledFeatures="[]"
+    enabled="{Boolean}true"
+    eventType="{Long}1"
+    excludeList=""
+    features="[]"
+    glob="/content/myproject/us/en(/.*)?"
+    nodetype="cq:PageContent"
+    runModes="author"
+    workflow="/var/workflow/models/Dynamic-Content-Approval"/>
