@@ -19,157 +19,178 @@ document.addEventListener("DOMContentLoaded", () => {
         window.dispatchEvent(new CustomEvent("aemCartUpdated")); 
     };
 
-    document.querySelectorAll(".cmp-product-listing").forEach(async (listingEl) => {
+    document.querySelectorAll(".cmp-product-listing").forEach((listingEl) => {
         const gridEl = listingEl.querySelector(".cmp-product-listing__grid");
         const paginationEl = listingEl.querySelector(".cmp-product-listing__pagination");
         
-        let allProducts = [];
+        let currentProducts = []; 
         let currentPage = 1;
+        let maxKnownPage = 1; // 🔥 NAYA LOGIC: Ye track karega ki kitne numbers (1, 2, 3) dikhane hain
 
-        const url = `/graphql/execute.json/myproject/get-all-products`;
-
-        // 🛠️ EXACT FIX: 100% WORKING SCROLL METHOD 🛠️
         const scrollToGridTop = () => {
             setTimeout(() => {
-                // Ye native method hai jo internal scrolling containers me bhi chalega
-                listingEl.style.scrollMarginTop = "100px"; // Header ko overlap hone se rokne ke liye gap
+                listingEl.style.scrollMarginTop = "100px"; 
                 listingEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }, 35); // 35ms delay taaki naye items render ho jayein
+            }, 35); 
         };
 
-        try {
-            const response = await fetch(url);
-            const data = await response.json();
-            allProducts = data?.data?.productModelList?.items || [];
+        const fetchProducts = async (page) => {
+            gridEl.innerHTML = `<p style="text-align: center; width: 100%; padding: 40px; font-size: 1.2rem;">Loading Products...</p>`;
+            paginationEl.style.display = "none";
+            
+            const offset = (page - 1) * ITEMS_PER_PAGE;
 
-            if (allProducts.length === 0) {
-                gridEl.innerHTML = `<p style="color:red; text-align:center; width:100%;">No products available.</p>`;
-                return;
-            }
+            // 🔥 URL FIX: Maine ; (semicolon) ki jagah ? aur & laga diya hai taaki AEM ko error na aaye
+            const fetchUrl = `/graphql/execute.json/myproject/get-limit-products;limit=${ITEMS_PER_PAGE};offset=${offset};`;
 
-            const renderGrid = () => {
-                gridEl.innerHTML = ""; 
-                
-                const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-                const endIndex = startIndex + ITEMS_PER_PAGE;
-                const paginatedProducts = allProducts.slice(startIndex, endIndex);
+            try {
+                const response = await fetch(fetchUrl);
+                const data = await response.json();
 
-                const cartData = JSON.parse(localStorage.getItem(CART_STORAGE_KEY)) || [];
-
-                paginatedProducts.forEach(product => {
-                    const imgPath = product.image?._path || "/content/dam/default.png";
-                    const descHtml = product.description?.html || "";
-                    const rawPrice = String(product.price).replace(/[^0-9.]/g, '');
-                    const safePrice = parseFloat(rawPrice) || 0;
-
-                    const cartItem = cartData.find(item => String(item.productid) === String(product.productid));
-                    
-                    let actionHTML = '';
-                    if (cartItem) {
-                        actionHTML = `
-                            <div class="cmp-product-card__qty-controls">
-                                <button class="cmp-product-card__qty-btn js-card-decrease" data-id="${product.productid}">-</button>
-                                <span class="cmp-product-card__qty-count">${cartItem.quantity}</span>
-                                <button class="cmp-product-card__qty-btn js-card-increase" data-id="${product.productid}">+</button>
-                            </div>
-                        `;
-                    } else {
-                        actionHTML = `<button class="cmp-product-card__btn js-add-to-cart" data-id="${product.productid}">Add to Cart</button>`;
-                    }
-
-                    const cardHtml = document.createElement("div");
-                    cardHtml.className = "cmp-product-card";
-                    cardHtml.innerHTML = `
-                        <img class="cmp-product-card__img" src="${imgPath}" alt="${product.title}" />
-                        <h3 class="cmp-product-card__title">${product.title}</h3>
-                        <div class="cmp-product-card__desc">${descHtml}</div>
-                        <div class="cmp-product-card__price">$${safePrice.toFixed(2)}</div>
-                        <div class="cmp-product-card__action-area">
-                            ${actionHTML}
-                        </div>
-                    `;
-                    gridEl.appendChild(cardHtml);
-                });
-
-                gridEl.querySelectorAll(".js-add-to-cart, .js-card-increase").forEach(btn => {
-                    btn.addEventListener("click", (e) => {
-                        const pid = e.target.getAttribute("data-id");
-                        const prod = allProducts.find(p => String(p.productid) === pid);
-                        if(prod) updateCartQuantity(prod, 1);
-                    });
-                });
-                gridEl.querySelectorAll(".js-card-decrease").forEach(btn => {
-                    btn.addEventListener("click", (e) => {
-                        const pid = e.target.getAttribute("data-id");
-                        const prod = allProducts.find(p => String(p.productid) === pid);
-                        if(prod) updateCartQuantity(prod, -1);
-                    });
-                });
-            };
-
-            const renderPagination = () => {
-                const totalPages = Math.ceil(allProducts.length / ITEMS_PER_PAGE);
-                
-                if (totalPages <= 1) {
-                    paginationEl.style.display = "none";
+                if (data.errors && data.errors.length > 0) {
+                    gridEl.innerHTML = `<p style="color:red; text-align:center; width:100%; padding:20px; border:1px solid red;">
+                        <strong>GraphQL Error:</strong> ${data.errors[0].message}
+                    </p>`;
                     return;
                 }
 
-                paginationEl.style.display = "flex";
-                paginationEl.innerHTML = "";
+                currentProducts = data?.data?.productModelList?.items || [];
 
-                // Previous Button
-                const prevBtn = document.createElement("button");
-                prevBtn.className = "cmp-pagination-btn";
-                prevBtn.textContent = "Previous";
-                prevBtn.disabled = currentPage === 1;
-                prevBtn.addEventListener("click", () => {
-                    if (currentPage > 1) {
-                        currentPage--;
-                        renderGrid(); 
-                        renderPagination();
-                        scrollToGridTop(); // Yahan Call
-                    }
-                });
-                paginationEl.appendChild(prevBtn);
-
-                // Page Number Buttons (1, 2, 3...)
-                for (let i = 1; i <= totalPages; i++) {
-                    const pageBtn = document.createElement("button");
-                    pageBtn.className = `cmp-pagination-btn ${i === currentPage ? 'cmp-pagination-btn--active' : ''}`;
-                    pageBtn.textContent = i;
-                    pageBtn.addEventListener("click", () => {
-                        currentPage = i;
-                        renderGrid(); 
-                        renderPagination();
-                        scrollToGridTop(); // Yahan Call
-                    });
-                    paginationEl.appendChild(pageBtn);
+                // 🔥 SMART NUMBER TRACKER
+                // Agar poore 16 items aaye, matlab agla page exist karta hai
+                if (currentProducts.length === ITEMS_PER_PAGE) {
+                    maxKnownPage = Math.max(maxKnownPage, currentPage + 1);
+                } else {
+                    // Agar 16 se kam aaye, toh matlab ye aakhiri page hai
+                    maxKnownPage = currentPage; 
                 }
 
-                // Next Button
-                const nextBtn = document.createElement("button");
-                nextBtn.className = "cmp-pagination-btn";
-                nextBtn.textContent = "Next";
-                nextBtn.disabled = currentPage === totalPages;
-                nextBtn.addEventListener("click", () => {
-                    if (currentPage < totalPages) {
-                        currentPage++;
-                        renderGrid(); 
-                        renderPagination();
-                        scrollToGridTop(); // Yahan Call
-                    }
+                if (currentProducts.length === 0 && currentPage === 1) {
+                    gridEl.innerHTML = `<p style="color:red; text-align:center; width:100%;">No products available.</p>`;
+                    return;
+                } else if (currentProducts.length === 0) {
+                    gridEl.innerHTML = `<p style="color:red; text-align:center; width:100%;">No more products found.</p>`;
+                    return;
+                }
+
+                renderGrid();
+                renderPagination();
+
+            } catch (error) {
+                gridEl.innerHTML = `<p style="color:red; text-align:center; width:100%;">Fetch Error: Could not connect to AEM.</p>`;
+                console.error("Fetch Error:", error);
+            }
+        };
+
+        const renderGrid = () => {
+            gridEl.innerHTML = ""; 
+            
+            const cartData = JSON.parse(localStorage.getItem(CART_STORAGE_KEY)) || [];
+
+            currentProducts.forEach(product => {
+                const imgPath = product.image?._path || "/content/dam/default.png";
+                const descHtml = product.description?.html || "";
+                const rawPrice = String(product.price).replace(/[^0-9.]/g, '');
+                const safePrice = parseFloat(rawPrice) || 0;
+
+                const cartItem = cartData.find(item => String(item.productid) === String(product.productid));
+                
+                let actionHTML = '';
+                if (cartItem) {
+                    actionHTML = `
+                        <div class="cmp-product-card__qty-controls">
+                            <button class="cmp-product-card__qty-btn js-card-decrease" data-id="${product.productid}">-</button>
+                            <span class="cmp-product-card__qty-count">${cartItem.quantity}</span>
+                            <button class="cmp-product-card__qty-btn js-card-increase" data-id="${product.productid}">+</button>
+                        </div>
+                    `;
+                } else {
+                    actionHTML = `<button class="cmp-product-card__btn js-add-to-cart" data-id="${product.productid}">Add to Cart</button>`;
+                }
+
+                const cardHtml = document.createElement("div");
+                cardHtml.className = "cmp-product-card";
+                cardHtml.innerHTML = `
+                    <img class="cmp-product-card__img" src="${imgPath}" alt="${product.title}" />
+                    <h3 class="cmp-product-card__title">${product.title}</h3>
+                    <div class="cmp-product-card__desc">${descHtml}</div>
+                    <div class="cmp-product-card__price">$${safePrice.toFixed(2)}</div>
+                    <div class="cmp-product-card__action-area">
+                        ${actionHTML}
+                    </div>
+                `;
+                gridEl.appendChild(cardHtml);
+            });
+
+            gridEl.querySelectorAll(".js-add-to-cart, .js-card-increase").forEach(btn => {
+                btn.addEventListener("click", (e) => {
+                    const pid = e.target.getAttribute("data-id");
+                    const prod = currentProducts.find(p => String(p.productid) === pid);
+                    if(prod) updateCartQuantity(prod, 1);
                 });
-                paginationEl.appendChild(nextBtn);
-            };
+            });
+            gridEl.querySelectorAll(".js-card-decrease").forEach(btn => {
+                btn.addEventListener("click", (e) => {
+                    const pid = e.target.getAttribute("data-id");
+                    const prod = currentProducts.find(p => String(p.productid) === pid);
+                    if(prod) updateCartQuantity(prod, -1);
+                });
+            });
+        };
 
-            renderGrid();
-            renderPagination();
-            window.addEventListener("aemCartUpdated", renderGrid);
+        const renderPagination = () => {
+            if (maxKnownPage <= 1 && currentProducts.length < ITEMS_PER_PAGE) {
+                paginationEl.style.display = "none";
+                return;
+            }
 
-        } catch (error) {
-            gridEl.innerHTML = `<p style="color:red; text-align:center; width:100%;">API Request Failed.</p>`;
-            console.error("Fetch Error:", error);
-        }
+            paginationEl.style.display = "flex";
+            paginationEl.innerHTML = "";
+
+            // Previous Button
+            const prevBtn = document.createElement("button");
+            prevBtn.className = "cmp-pagination-btn";
+            prevBtn.textContent = "Previous";
+            prevBtn.disabled = currentPage === 1; 
+            prevBtn.addEventListener("click", () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    fetchProducts(currentPage); 
+                    scrollToGridTop(); 
+                }
+            });
+            paginationEl.appendChild(prevBtn);
+
+            // 🔥 CLICKABLE NUMBERS WAPAS AA GAYE (1, 2, 3...)
+            for (let i = 1; i <= maxKnownPage; i++) {
+                const pageBtn = document.createElement("button");
+                pageBtn.className = `cmp-pagination-btn ${i === currentPage ? 'cmp-pagination-btn--active' : ''}`;
+                pageBtn.textContent = i;
+                pageBtn.addEventListener("click", () => {
+                    currentPage = i;
+                    fetchProducts(currentPage); 
+                    scrollToGridTop(); 
+                });
+                paginationEl.appendChild(pageBtn);
+            }
+
+            // Next Button
+            const nextBtn = document.createElement("button");
+            nextBtn.className = "cmp-pagination-btn";
+            nextBtn.textContent = "Next";
+            nextBtn.disabled = currentProducts.length < ITEMS_PER_PAGE; 
+            nextBtn.addEventListener("click", () => {
+                if (currentProducts.length === ITEMS_PER_PAGE) {
+                    currentPage++;
+                    fetchProducts(currentPage); 
+                    scrollToGridTop(); 
+                }
+            });
+            paginationEl.appendChild(nextBtn);
+        };
+
+        fetchProducts(currentPage);
+        
+        window.addEventListener("aemCartUpdated", renderGrid);
     });
 });
