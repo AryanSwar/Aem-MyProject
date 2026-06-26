@@ -1,0 +1,4 @@
+.cmp-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 30px; background: #222; color: #fff; font-family: sans-serif; }
+.cmp-header__logo { font-size: 1.5rem; font-weight: bold; }
+.cmp-header__cart-wrapper { position: relative; cursor: pointer; }
+.cmp-header__cart-badge { background: #ff4d4f; color: #fff; border-radius: 50%; padding: 2px 8px; font-size: 0.8rem; position: absolute; top: -10px; right: -15px; font-weight: bold; }

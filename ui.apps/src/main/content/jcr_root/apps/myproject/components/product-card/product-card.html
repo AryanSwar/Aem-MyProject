@@ -1,0 +1,12 @@
+<sly data-sly-use.clientlib="/libs/granite/sightly/templates/clientlib.html"
+     data-sly-call="${clientlib.all @ categories='myproject.components.product-card'}"/>
+
+<div class="cmp-product-listing">
+    <div class="cmp-product-listing__grid">
+        <p style="text-align: center; width: 100%; padding: 40px; font-size: 1.2rem;">
+            Loading Products...
+        </p>
+    </div>
+    
+    <div class="cmp-product-listing__pagination" style="display: none;"></div>
+</div>

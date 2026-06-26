@@ -1,0 +1,22 @@
+<sly data-sly-use.clientlib="/libs/granite/sightly/templates/clientlib.html"
+     data-sly-call="${clientlib.all @ categories='myproject.components.cart'}"/>
+
+<div id="cartModalOverlay" class="cart-modal-overlay">
+    <div class="cmp-cart" data-cart-wrapper="true">
+        
+        <button id="closeCartBtn" class="cmp-cart__close-btn">&times;</button>
+
+        <h2 class="cmp-cart__header">${properties.title || 'Your Shopping Cart'}</h2>
+        
+        <div class="cmp-cart__items" data-cart-target="items"></div>
+        
+        <div class="cmp-cart__summary" data-cart-target="summary">
+            <div class="cmp-cart__total-text">
+                Total Amount: <span class="cmp-cart__total-amount" data-cart-target="total">$0.00</span>
+            </div>
+            <button class="cmp-cart__checkout-btn" data-cart-target="checkout">
+                Proceed to Checkout
+            </button>
+        </div>
+    </div>
+</div>

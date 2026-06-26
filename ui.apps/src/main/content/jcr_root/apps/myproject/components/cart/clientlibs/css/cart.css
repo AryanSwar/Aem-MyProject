@@ -1,0 +1,98 @@
+/* Overlay Background */
+.cart-modal-overlay {
+    visibility: hidden;
+    opacity: 0;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+/* Jab Cart Open Ho */
+.cart-modal-overlay.show-cart-modal {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Side Drawer Cart Styling (Left Side) */
+.cart-modal-overlay .cmp-cart {
+    position: fixed;
+    top: 0;
+    left: -100%; /* Starting mein screen ke left side bahar chupa rahega */
+    width: 400px;
+    max-width: 85vw; /* Mobile ke liye */
+    height: 100vh;
+    background: #fff;
+    margin: 0;
+    padding: 24px;
+    box-shadow: 4px 0 15px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    transition: left 0.4s ease-in-out; /* Smooth sliding animation */
+    font-family: sans-serif;
+    box-sizing: border-box;
+}
+
+/* Jab Drawer andar aaye */
+.cart-modal-overlay.show-cart-modal .cmp-cart {
+    left: 0;
+}
+
+/* Close Button */
+.cmp-cart__close-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 32px;
+    background: transparent;
+    border: none;
+    color: #333;
+    cursor: pointer;
+    line-height: 1;
+    z-index: 10;
+}
+.cmp-cart__close-btn:hover { color: #d32f2f; }
+
+/* Header Formatting */
+.cmp-cart__header { border-bottom: 2px solid #f0f0f0; padding-bottom: 12px; margin-top: 0; margin-bottom: 10px; color: #333; font-size: 1.5rem; }
+.cmp-cart__empty-msg { text-align: center; color: #666; font-size: 1.1rem; margin: 40px 0; }
+
+/* Items list - Scrollable area */
+.cmp-cart__items {
+    flex-grow: 1;          /* Bachi hui poori height le lega */
+    overflow-y: auto;      /* Items zyada hone par scroll aayega */
+    margin: 10px 0;
+    padding-right: 10px;
+}
+/* Scrollbar styling for smooth look */
+.cmp-cart__items::-webkit-scrollbar { width: 6px; }
+.cmp-cart__items::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
+
+/* Item Styling */
+.cmp-cart__item { display: flex; flex-direction: column; gap: 10px; padding: 16px 0; border-bottom: 1px solid #f0f0f0; }
+.cmp-cart__item-info { display: flex; align-items: center; }
+.cmp-cart__item-image { width: 60px; height: 60px; object-fit: contain; margin-right: 15px; border: 1px solid #e0e0e0; border-radius: 6px; padding: 2px; }
+.cmp-cart__item-title { margin: 0 0 4px 0; font-size: 1rem; color: #333; }
+.cmp-cart__item-price { color: #2e7d32; font-size: 0.9rem; font-weight: bold; }
+
+/* Quantity Controls - Flex for modern look */
+.cmp-cart__item-bottom-row { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+.cmp-cart__controls { display: flex; align-items: center; gap: 8px; }
+.cmp-cart__qty-btn { background: #f5f5f5; border: 1px solid #ccc; padding: 4px 12px; cursor: pointer; font-weight: bold; font-size: 1rem; border-radius: 4px; }
+.cmp-cart__qty-display { color: #333; font-weight: bold; min-width: 20px; text-align: center; font-size: 1rem; }
+.cmp-cart__item-total { font-weight: bold; font-size: 1.1rem; color: #333; }
+
+/* Bottom Checkout Area - Fixed at bottom */
+.cmp-cart__summary {
+    margin-top: auto;      /* Hamesha bottom mein fixed rahega */
+    padding-top: 20px;
+    border-top: 2px solid #f0f0f0;
+    background: #fff;
+}
+.cmp-cart__summary--hidden { display: none; }
+.cmp-cart__total-text { display: flex; justify-content: space-between; align-items: center; color: #333; font-size: 1.2rem; margin-bottom: 16px; font-weight: bold; }
+.cmp-cart__total-amount { color: #d32f2f; font-size: 1.4rem; }
+
+.cmp-cart__checkout-btn { width: 100%; background: #0054E6; color: #fff; border: none; padding: 14px; font-size: 1.1rem; border-radius: 4px; cursor: pointer; font-weight: bold; text-align: center; }
+.cmp-cart__checkout-btn:hover { background: #003eb0; }
