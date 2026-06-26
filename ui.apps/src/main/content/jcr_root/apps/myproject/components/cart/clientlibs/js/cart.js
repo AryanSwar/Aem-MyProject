@@ -37,7 +37,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 const row = document.createElement("div");
                 row.className = "cmp-cart__item";
                 
-                // Naya Drawer Friendly UI Layout
                 row.innerHTML = `
                     <div class="cmp-cart__item-info">
                         <img 
@@ -99,10 +98,23 @@ document.addEventListener("DOMContentLoaded", () => {
     const cartModalOverlay = document.getElementById("cartModalOverlay");
     const closeCartBtn = document.getElementById("closeCartBtn");
 
+    // Modal Overlay ko body ke aakhir mein move kar rahe hain taaki container bounds use block na karein
+    if (cartModalOverlay && cartModalOverlay.parentNode !== document.body) {
+        document.body.appendChild(cartModalOverlay);
+    }
+
     document.addEventListener("click", (e) => {
         if (e.target.closest(".js-open-cart")) {
             e.preventDefault(); 
-            if(cartModalOverlay) cartModalOverlay.classList.add("show-cart-modal");
+            if(cartModalOverlay) {
+                cartModalOverlay.classList.add("show-cart-modal");
+                
+                // NAYA FIX: Jaise hi cart khulega, uske items wapas Top par aa jayenge
+                const itemsContainer = cartModalOverlay.querySelector('.cmp-cart__items');
+                if (itemsContainer) {
+                    itemsContainer.scrollTop = 0; 
+                }
+            }
         }
     });
 
