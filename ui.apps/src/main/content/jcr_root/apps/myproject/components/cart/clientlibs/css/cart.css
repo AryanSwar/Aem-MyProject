@@ -27,7 +27,7 @@
     height: 100vh;    /* Poori screen ki height lega */
     background: #fff;
     margin: 0;
-    padding: 24px;
+    padding: 20px;
     box-shadow: 4px 0 15px rgba(0,0,0,0.2);
     display: flex;
     flex-direction: column;
@@ -59,7 +59,7 @@
 .cmp-cart__close-btn:hover { color: #d32f2f; }
 
 /* Header Formatting */
-.cmp-cart__header { border-bottom: 2px solid #f0f0f0; padding-bottom: 12px; margin-top: 0; margin-bottom: 10px; color: #333; font-size: 1.5rem; }
+.cmp-cart__header { border-bottom: 1px solid #f0f0f0; padding-bottom: 8px; margin-top: 0; margin-bottom: 6px; color: #333; font-size: 1.5rem; }
 .cmp-cart__empty-msg { text-align: center; color: #666; font-size: 1.1rem; margin: 40px 0; }
 
 /* Items list - Scrollable area */
@@ -75,7 +75,7 @@
 .cmp-cart__items::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
 
 /* Item Styling */
-.cmp-cart__item { display: flex; flex-direction: column; gap: 10px; padding: 16px 0; border-bottom: 1px solid #f0f0f0; }
+.cmp-cart__item { display: flex; flex-direction: column; gap: 10px; padding: 8px 0; border-bottom: 1px solid #f0f0f0; }
 .cmp-cart__item-info { display: flex; align-items: center; }
 .cmp-cart__item-image { width: 60px; height: 60px; object-fit: contain; margin-right: 15px; border: 1px solid #e0e0e0; border-radius: 6px; padding: 2px; }
 .cmp-cart__item-title { margin: 0 0 4px 0; font-size: 1rem; color: #333; }
@@ -92,7 +92,7 @@
 .cmp-cart__summary {
     flex-shrink: 0;
     margin-top: 0;         /* Items ke theek niche chipka rahega */
-    padding-top: 20px;
+    padding-top: 10px;
     /* border-top: 2px solid #f0f0f0; */
     background: #fff;
 }
