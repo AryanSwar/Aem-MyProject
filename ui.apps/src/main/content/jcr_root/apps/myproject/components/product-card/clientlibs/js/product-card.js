@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
         
         let currentProducts = []; 
         let currentPage = 1;
-        let maxKnownPage = 1; // 🔥 NAYA LOGIC: Ye track karega ki kitne numbers (1, 2, 3) dikhane hain
+        let totalKnownPages = 1; // 🔥 NAYA TRACKER: Count API se calculate karke yahan store karenge
 
         const scrollToGridTop = () => {
             setTimeout(() => {
@@ -34,13 +34,28 @@ document.addEventListener("DOMContentLoaded", () => {
             }, 35); 
         };
 
+        // 🔥 STEP 1: Pehle total count nikal ke pages decide karne wali API
+        const initPaginationCount = async () => {
+            const countUrl = `/graphql/execute.json/myproject/get-totalcount-products`;
+            try {
+                const res = await fetch(countUrl);
+                const countData = await res.json();
+                const allItems = countData?.data?.productModelList?.items || [];
+                
+                if (allItems.length > 0) {
+                    // Total items ko 16 se divide karke round-up kar diya (e.g., 45/16 = 3 pages)
+                    totalKnownPages = Math.ceil(allItems.length / ITEMS_PER_PAGE);
+                }
+            } catch (err) {
+                console.error("Total Count fetch failed, falling back to basic pagination", err);
+            }
+        };
+
         const fetchProducts = async (page) => {
             gridEl.innerHTML = `<p style="text-align: center; width: 100%; padding: 40px; font-size: 1.2rem;">Loading Products...</p>`;
             paginationEl.style.display = "none";
             
             const offset = (page - 1) * ITEMS_PER_PAGE;
-
-            // 🔥 URL FIX: Maine ; (semicolon) ki jagah ? aur & laga diya hai taaki AEM ko error na aaye
             const fetchUrl = `/graphql/execute.json/myproject/get-limit-products;limit=${ITEMS_PER_PAGE};offset=${offset};`;
 
             try {
@@ -55,15 +70,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
                 currentProducts = data?.data?.productModelList?.items || [];
-
-                // 🔥 SMART NUMBER TRACKER
-                // Agar poore 16 items aaye, matlab agla page exist karta hai
-                if (currentProducts.length === ITEMS_PER_PAGE) {
-                    maxKnownPage = Math.max(maxKnownPage, currentPage + 1);
-                } else {
-                    // Agar 16 se kam aaye, toh matlab ye aakhiri page hai
-                    maxKnownPage = currentPage; 
-                }
 
                 if (currentProducts.length === 0 && currentPage === 1) {
                     gridEl.innerHTML = `<p style="color:red; text-align:center; width:100%;">No products available.</p>`;
@@ -139,7 +145,8 @@ document.addEventListener("DOMContentLoaded", () => {
         };
 
         const renderPagination = () => {
-            if (maxKnownPage <= 1 && currentProducts.length < ITEMS_PER_PAGE) {
+            // Agar total page 1 hi hai, toh pagination chupao
+            if (totalKnownPages <= 1) {
                 paginationEl.style.display = "none";
                 return;
             }
@@ -161,15 +168,17 @@ document.addEventListener("DOMContentLoaded", () => {
             });
             paginationEl.appendChild(prevBtn);
 
-            // 🔥 CLICKABLE NUMBERS WAPAS AA GAYE (1, 2, 3...)
-            for (let i = 1; i <= maxKnownPage; i++) {
+            // 🔥 AB YE HAMESHA TOTAL PAGES (e.g., 1 se 5 tak) DIKHAYEGA
+            for (let i = 1; i <= totalKnownPages; i++) {
                 const pageBtn = document.createElement("button");
                 pageBtn.className = `cmp-pagination-btn ${i === currentPage ? 'cmp-pagination-btn--active' : ''}`;
                 pageBtn.textContent = i;
                 pageBtn.addEventListener("click", () => {
-                    currentPage = i;
-                    fetchProducts(currentPage); 
-                    scrollToGridTop(); 
+                    if (currentPage !== i) { // Same page pe dobara click karne se rokne ke liye
+                        currentPage = i;
+                        fetchProducts(currentPage); 
+                        scrollToGridTop(); 
+                    }
                 });
                 paginationEl.appendChild(pageBtn);
             }
@@ -178,9 +187,9 @@ document.addEventListener("DOMContentLoaded", () => {
             const nextBtn = document.createElement("button");
             nextBtn.className = "cmp-pagination-btn";
             nextBtn.textContent = "Next";
-            nextBtn.disabled = currentProducts.length < ITEMS_PER_PAGE; 
+            nextBtn.disabled = currentPage === totalKnownPages; // Last page pe aate hi Next disable ho jayega
             nextBtn.addEventListener("click", () => {
-                if (currentProducts.length === ITEMS_PER_PAGE) {
+                if (currentPage < totalKnownPages) {
                     currentPage++;
                     fetchProducts(currentPage); 
                     scrollToGridTop(); 
@@ -189,7 +198,13 @@ document.addEventListener("DOMContentLoaded", () => {
             paginationEl.appendChild(nextBtn);
         };
 
-        fetchProducts(currentPage);
+        // 🔥 MASTER EXECUTION: Pehle count calculate hoga, fir Page 1 load hoga
+        const startApp = async () => {
+            await initPaginationCount();
+            fetchProducts(currentPage);
+        };
+
+        startApp();
         
         window.addEventListener("aemCartUpdated", renderGrid);
     });
