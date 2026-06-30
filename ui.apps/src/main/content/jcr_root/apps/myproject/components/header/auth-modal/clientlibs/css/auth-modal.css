@@ -18,7 +18,8 @@
     display: flex; 
     width: 750px; 
     max-width: 95vw;
-    height: 500px; 
+    min-height: 500px; /* Fixed height hata di, ab form bada hone par modal khud bada hoga */
+    height: auto; 
     background: #fff; 
     border-radius: 4px; 
     overflow: hidden; 

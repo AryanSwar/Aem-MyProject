@@ -45,14 +45,23 @@
             </div>
 
             <div class="cmp-auth-view js-view-details" style="display: none;">
-                <input type="text" placeholder="First Name" class="cmp-auth-input" />
-                <input type="text" placeholder="Last Name" class="cmp-auth-input" />
-                <input type="email" placeholder="Email ID" class="cmp-auth-input" />
+                <input type="text" placeholder="First Name *" class="cmp-auth-input js-fname-input" required />
+                
+                <input type="text" placeholder="Middle Name" class="cmp-auth-input js-mname-input" />
+                
+                <input type="text" placeholder="Last Name *" class="cmp-auth-input js-lname-input" required />
+                <input type="email" placeholder="Email ID *" class="cmp-auth-input js-email-signup-input" required />
+                
                 <div class="cmp-auth-input-group">
                     <label style="font-size: 12px; color: #878787;">Date of Birth</label>
                     <input type="date" class="cmp-auth-input" />
                 </div>
-                <button class="cmp-auth-btn">Sign Up</button>
+
+                <input type="password" placeholder="Create Password *" class="cmp-auth-input js-create-pass-input" required />
+                <input type="password" placeholder="Re-enter Password *" class="cmp-auth-input js-reenter-pass-input" required />
+                <p class="js-pass-error-msg" style="color: red; font-size: 12px; margin-top: -15px; margin-bottom: 20px; display: none;">write same password you enter</p>
+
+                <button class="cmp-auth-btn js-signup-submit-btn">Sign Up</button>
                 <a href="#" class="cmp-auth-bottom-link js-go-login">Existing User? Log in</a>
             </div>
         </div>
