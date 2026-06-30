@@ -4,8 +4,14 @@
 <header class="cmp-header">
     <div class="cmp-header__logo">${properties.logoText || 'My Store'}</div>
     
-    <div class="cmp-header__cart-wrapper js-open-cart">
-        <span class="cmp-header__cart-icon">🛒 Cart</span>
-        <span class="cmp-header__cart-badge" style="display:none;">0</span>
+    <div class="cmp-header__actions">
+        <div class="cmp-header__login-btn js-open-login-trigger" id="header-auth-btn">
+            <span>👤 Login</span>
+        </div>
+        
+        <div class="cmp-header__cart-wrapper js-open-cart">
+            <span class="cmp-header__cart-icon">🛒 Cart</span>
+            <span class="cmp-header__cart-badge" style="display:none;">0</span>
+        </div>
     </div>
 </header>

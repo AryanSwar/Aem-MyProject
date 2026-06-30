@@ -1,0 +1,60 @@
+<sly data-sly-use.clientlib="/libs/granite/sightly/templates/clientlib.html"
+     data-sly-call="${clientlib.all @ categories='myproject.components.auth-modal'}"/>
+
+<dialog class="cmp-auth-modal js-auth-modal">
+    
+    <div class="cmp-auth-modal__content">
+        
+        <div class="cmp-auth-modal__left">
+            <h2 class="js-auth-title">${properties.title || 'Login'}</h2>
+            <p class="js-auth-desc">${properties.description || 'Get access to your Orders, Wishlist and Recommendations'}</p>
+            <div class="cmp-auth-modal__illustration"></div>
+        </div>
+        
+        <div class="cmp-auth-modal__right">
+            <button class="cmp-auth-modal__close js-close-auth">&times;</button>
+            
+            <div class="cmp-auth-view js-view-login">
+                <input type="text" id="login-email-input" placeholder="Enter Username / Email" class="cmp-auth-input" />
+                <input type="password" id="login-pass-input" placeholder="Enter Password" class="cmp-auth-input" />
+                <a href="#" class="cmp-auth-link cmp-auth-link--forgot js-go-forgot">Forgot Password?</a>
+                <p class="cmp-auth-terms">By continuing, you agree to E-commerce's Terms of Use and Privacy Policy.</p>
+                <button class="cmp-auth-btn js-login-submit-btn">Login</button>
+                <a href="#" class="cmp-auth-bottom-link js-go-register">New to E-commerce? Create an account</a>
+            </div>
+
+            <div class="cmp-auth-view js-view-forgot-mobile" style="display: none;">
+                <input type="tel" placeholder="Enter Mobile Number" class="cmp-auth-input js-forgot-mobile-input" maxlength="10" />
+                <p class="cmp-auth-terms">We will send a 6-digit OTP to verify your account.</p>
+                <button class="cmp-auth-btn js-send-otp-btn">Send OTP</button>
+                <a href="#" class="cmp-auth-bottom-link js-go-login">Back to Login</a>
+            </div>
+
+            <div class="cmp-auth-view js-view-forgot-otp" style="display: none;">
+                <p style="color: #2e7d32; font-size: 13px; font-weight: bold; margin-bottom: 15px;">✓ OTP Sent Successfully!</p>
+                <input type="text" placeholder="Enter 6-digit OTP" class="cmp-auth-input js-forgot-otp-input" maxlength="6" />
+                <button class="cmp-auth-btn js-verify-forgot-otp-btn">Verify</button>
+                <a href="#" class="cmp-auth-bottom-link js-go-login">Back to Login</a>
+            </div>
+
+            <div class="cmp-auth-view js-view-verify" style="display: none;">
+                <input type="tel" placeholder="Enter Mobile Number" class="cmp-auth-input js-mobile-input" maxlength="10" />
+                <p class="cmp-auth-terms">By continuing, you agree to E-commerce's Terms of Use and Privacy Policy.</p>
+                <button class="cmp-auth-btn js-verify-btn">Verify Mobile</button>
+                <a href="#" class="cmp-auth-bottom-link js-go-login">Existing User? Log in</a>
+            </div>
+
+            <div class="cmp-auth-view js-view-details" style="display: none;">
+                <input type="text" placeholder="First Name" class="cmp-auth-input" />
+                <input type="text" placeholder="Last Name" class="cmp-auth-input" />
+                <input type="email" placeholder="Email ID" class="cmp-auth-input" />
+                <div class="cmp-auth-input-group">
+                    <label style="font-size: 12px; color: #878787;">Date of Birth</label>
+                    <input type="date" class="cmp-auth-input" />
+                </div>
+                <button class="cmp-auth-btn">Sign Up</button>
+                <a href="#" class="cmp-auth-bottom-link js-go-login">Existing User? Log in</a>
+            </div>
+        </div>
+    </div>
+</dialog>

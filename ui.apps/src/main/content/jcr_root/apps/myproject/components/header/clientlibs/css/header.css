@@ -2,3 +2,8 @@
 .cmp-header__logo { font-size: 1.5rem; font-weight: bold; }
 .cmp-header__cart-wrapper { position: relative; cursor: pointer; }
 .cmp-header__cart-badge { background: #ff4d4f; color: #fff; border-radius: 50%; padding: 2px 8px; font-size: 0.8rem; position: absolute; top: -10px; right: -15px; font-weight: bold; }
+
+/* 🌟 NAYA CODE: Login aur Cart ko align karne ke liye */
+.cmp-header__actions { display: flex; align-items: center; gap: 20px; }
+.cmp-header__login-btn { cursor: pointer; font-weight: bold; }
+.cmp-header__login-btn:hover { color: #ccc; }
