@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 // Agar user logged in hai, toh click karne par Logout kar do
                 localStorage.removeItem("isUserLoggedIn");
                 updateAuthUI();
-                alert("Logged out successfully!");
+                // Logout success alert removed here
                 window.location.reload(); // Page refresh kardo
             } else {
                 // Agar login nahi hai, toh purane jaisa popup open karo

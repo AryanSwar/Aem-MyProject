@@ -3,22 +3,20 @@
     border: none; 
     padding: 0; 
     background: transparent; 
-    margin: auto; /* Ye isko hamesha screen ke center mein rakhega */
+    margin: auto; 
     overflow: visible;
 }
 
-/* Browser native dark background layega (AEM ise bypass nahi kar sakta) */
 .cmp-auth-modal::backdrop {
     background-color: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(2px); /* Halkasa blur effect piche */
+    backdrop-filter: blur(2px); 
 }
 
-/* Modal Container Content */
 .cmp-auth-modal__content { 
     display: flex; 
     width: 750px; 
     max-width: 95vw;
-    min-height: 500px; /* Fixed height hata di, ab form bada hone par modal khud bada hoga */
+    min-height: 500px; 
     height: auto; 
     background: #fff; 
     border-radius: 4px; 
@@ -27,7 +25,6 @@
     font-family: sans-serif; 
 }
 
-/* Baaki ka andar ka styling same rahega */
 .cmp-auth-modal__left { width: 40%; background: #2874f0; padding: 40px 30px; color: #fff; display: flex; flex-direction: column; position: relative; }
 .cmp-auth-modal__left h2 { font-size: 28px; font-weight: 500; margin: 0 0 16px 0; }
 .cmp-auth-modal__left p { font-size: 18px; line-height: 1.5; color: #dbe4ff; margin: 0; }

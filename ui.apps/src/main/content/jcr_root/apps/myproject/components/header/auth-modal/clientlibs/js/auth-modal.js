@@ -5,10 +5,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const closeBtns = document.querySelectorAll(".js-close-auth");
     
-    // Saari views ko select kiya
     const viewLogin = document.querySelector(".js-view-login");
     const viewVerify = document.querySelector(".js-view-verify");
-    const viewRegisterOtp = document.querySelector(".js-view-register-otp"); // 🌟 NAYA: Registration OTP view
+    const viewRegisterOtp = document.querySelector(".js-view-register-otp"); 
     const viewDetails = document.querySelector(".js-view-details");
     const viewForgotMobile = document.querySelector(".js-view-forgot-mobile");
     const viewForgotOtp = document.querySelector(".js-view-forgot-otp");
@@ -16,7 +15,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const authTitle = document.querySelector(".js-auth-title");
     const authDesc = document.querySelector(".js-auth-desc");
 
-    // Ek view dikhate waqt baaki sabko hide karne ka helper function
     const hideAllViews = () => {
         const allViews = modal.querySelectorAll(".cmp-auth-view");
         allViews.forEach(v => {
@@ -44,7 +42,6 @@ document.addEventListener("DOMContentLoaded", () => {
         authDesc.textContent = "Sign up with your mobile number to get started";
     };
 
-    // 🌟 NAYA: Show Registration OTP View
     const showRegisterOtpView = () => {
         hideAllViews();
         viewRegisterOtp.style.display = "flex";
@@ -133,14 +130,14 @@ document.addEventListener("DOMContentLoaded", () => {
                         localStorage.setItem("isUserLoggedIn", "true"); 
                         window.dispatchEvent(new CustomEvent("authStatusChanged")); 
                         closeModal(); 
-                        alert("Logged in successfully!");
+                        // Login success alert removed here
                     } else {
-                        alert("Login Failed: Invalid Email/Mobile or Password.");
+                        // Login failed alert removed here
+                        console.log("Login Failed: Invalid Email/Mobile or Password.");
                     }
                 })
                 .catch(error => {
                     console.error('Login Error:', error);
-                    alert("Something went wrong with the login process.");
                 })
                 .finally(() => {
                     loginSubmitBtn.textContent = "Login";
@@ -167,6 +164,8 @@ document.addEventListener("DOMContentLoaded", () => {
             if (mobileVal.length >= 10) {
                 sendOtpBtn.textContent = "Sending OTP...";
                 setTimeout(() => {
+                    // TESTING OTP POPUP ADDED HERE
+                    alert("TESTING MODE OTP: 123456"); 
                     sendOtpBtn.textContent = "Send OTP";
                     showForgotOtpView(); 
                 }, 1000);
@@ -181,7 +180,7 @@ document.addEventListener("DOMContentLoaded", () => {
         verifyForgotOtpBtn.addEventListener("click", () => {
             const otpVal = document.querySelector(".js-forgot-otp-input").value.trim();
             if (otpVal.length === 6) {
-                alert("OTP Verified Successfully! (You can reset your password now)");
+                // Success alert removed here
                 showLoginView(); 
             } else {
                 alert("Please enter a 6-digit OTP.");
@@ -189,7 +188,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // --- 🌟 UPDATE: SEND OTP FOR REGISTRATION (STEP 1) ---
+    // --- SEND OTP FOR REGISTRATION (STEP 1) ---
     const verifyBtn = document.querySelector(".js-verify-btn");
     const mobileInput = document.querySelector(".js-mobile-input");
     
@@ -219,16 +218,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 .then(response => response.json())
                 .then(data => {
                     if (data.status === "success") {
-                        // 🔴 TESTING MODE: Alert dikha rahe hain taaki aap OTP dekh kar type kar sakein
+                        // TESTING MODE OTP ALERT KEPT AS REQUESTED
                         alert("TESTING MODE OTP: " + data.otp); 
                         showRegisterOtpView(); 
                     } else {
-                        alert("Failed to send OTP.");
+                        console.log("Failed to send OTP.");
                     }
                 })
                 .catch(error => {
                     console.error('OTP Generation Error:', error);
-                    alert("Something went wrong with the backend.");
                 })
                 .finally(() => {
                     verifyBtn.textContent = "Send OTP";
@@ -241,7 +239,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // --- 🌟 NAYA: VERIFY THE GENERATED OTP (STEP 2) ---
+    // --- VERIFY THE GENERATED OTP (STEP 2) ---
     const verifyRegisterOtpBtn = document.querySelector(".js-verify-register-otp-btn");
     const registerOtpInput = document.querySelector(".js-register-otp-input");
     const detailsMobileInput = document.querySelector(".js-details-mobile-input"); 
@@ -249,7 +247,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (verifyRegisterOtpBtn) {
         verifyRegisterOtpBtn.addEventListener("click", () => {
             const otpVal = registerOtpInput.value.trim();
-            const mobileVal = mobileInput.value.trim(); // Jo mobile pehle dala tha
+            const mobileVal = mobileInput.value.trim(); 
 
             if (otpVal.length === 6) {
                 verifyRegisterOtpBtn.textContent = "Verifying...";
@@ -275,18 +273,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 .then(response => response.json())
                 .then(data => {
                     if (data.status === "success") {
-                        alert("Mobile Verified Successfully!");
+                        // Success alert removed here
                         if(detailsMobileInput) {
-                            detailsMobileInput.value = mobileVal; // Details me autofill ho gaya
+                            detailsMobileInput.value = mobileVal; 
                         }
-                        showDetailsView(); // Details form par bhej diya
+                        showDetailsView(); 
                     } else {
-                        alert("Incorrect OTP. Please try again.");
+                        // Failed alert removed here
+                        console.log("Incorrect OTP. Please try again.");
                     }
                 })
                 .catch(error => {
                     console.error('OTP Verification Error:', error);
-                    alert("Something went wrong during verification.");
                 })
                 .finally(() => {
                     verifyRegisterOtpBtn.textContent = "Verify OTP";
@@ -299,7 +297,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // --- CREATE ACCOUNT VALIDATION & POSTGRESQL DB LOGIC (STEP 3) ---
+    // --- CREATE ACCOUNT VALIDATION & DB LOGIC (STEP 3) ---
     const createPassInput = document.querySelector(".js-create-pass-input");
     const reenterPassInput = document.querySelector(".js-reenter-pass-input");
     const passErrorMsg = document.querySelector(".js-pass-error-msg");
@@ -381,7 +379,7 @@ document.addEventListener("DOMContentLoaded", () => {
             })
             .then(data => {
                 if (data.status === "success") {
-                    alert("Account created successfully!");
+                    // Registration success alert removed here
                     fnameInput.value = "";
                     if(mnameInput) mnameInput.value = "";
                     lnameInput.value = "";
@@ -393,12 +391,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     
                     showLoginView(); 
                 } else {
-                    alert("Registration Failed: " + data.message);
+                    // Registration failed alert removed here
+                    console.log("Registration Failed: " + data.message);
                 }
             })
             .catch(error => {
                 console.error('Error during registration:', error);
-                alert("Something went wrong with the database connection.");
             })
             .finally(() => {
                 signUpSubmitBtn.textContent = "Sign Up";
