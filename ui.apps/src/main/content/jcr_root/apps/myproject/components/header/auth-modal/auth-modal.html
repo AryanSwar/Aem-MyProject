@@ -15,7 +15,7 @@
             <button class="cmp-auth-modal__close js-close-auth">&times;</button>
             
             <div class="cmp-auth-view js-view-login">
-                <input type="text" id="login-email-input" placeholder="Enter Username / Email" class="cmp-auth-input" />
+                <input type="text" id="login-email-input" placeholder="Enter Email / Mobile Number" class="cmp-auth-input" />
                 <input type="password" id="login-pass-input" placeholder="Enter Password" class="cmp-auth-input" />
                 <a href="#" class="cmp-auth-link cmp-auth-link--forgot js-go-forgot">Forgot Password?</a>
                 <p class="cmp-auth-terms">By continuing, you agree to E-commerce's Terms of Use and Privacy Policy.</p>
@@ -40,15 +40,22 @@
             <div class="cmp-auth-view js-view-verify" style="display: none;">
                 <input type="tel" placeholder="Enter Mobile Number" class="cmp-auth-input js-mobile-input" maxlength="10" />
                 <p class="cmp-auth-terms">By continuing, you agree to E-commerce's Terms of Use and Privacy Policy.</p>
-                <button class="cmp-auth-btn js-verify-btn">Verify Mobile</button>
+                <button class="cmp-auth-btn js-verify-btn">Send OTP</button>
                 <a href="#" class="cmp-auth-bottom-link js-go-login">Existing User? Log in</a>
             </div>
 
+            <div class="cmp-auth-view js-view-register-otp" style="display: none;">
+                <p style="color: #2e7d32; font-size: 13px; font-weight: bold; margin-bottom: 15px;">✓ OTP Sent to your Mobile!</p>
+                <input type="text" placeholder="Enter 6-digit OTP" class="cmp-auth-input js-register-otp-input" maxlength="6" />
+                <button class="cmp-auth-btn js-verify-register-otp-btn">Verify OTP</button>
+                <a href="#" class="cmp-auth-bottom-link js-go-login">Back to Login</a>
+            </div>
+
             <div class="cmp-auth-view js-view-details" style="display: none;">
+                <input type="tel" class="cmp-auth-input js-details-mobile-input" readonly style="background-color: #f9f9f9; color: #878787; cursor: not-allowed;" />
+                
                 <input type="text" placeholder="First Name *" class="cmp-auth-input js-fname-input" required />
-                
                 <input type="text" placeholder="Middle Name" class="cmp-auth-input js-mname-input" />
-                
                 <input type="text" placeholder="Last Name *" class="cmp-auth-input js-lname-input" required />
                 <input type="email" placeholder="Email ID *" class="cmp-auth-input js-email-signup-input" required />
                 
