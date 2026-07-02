@@ -25,6 +25,9 @@
 
             <div class="cmp-auth-view js-view-forgot-mobile" style="display: none;">
                 <input type="tel" placeholder="Enter Mobile Number" class="cmp-auth-input js-forgot-mobile-input" maxlength="10" />
+                
+                <p class="js-forgot-error-msg" style="color: red; font-size: 13px; margin-top: -15px; margin-bottom: 15px; display: none;">Incorrect mobile no. User does not exist.</p>
+                
                 <p class="cmp-auth-terms">We will send a 6-digit OTP to verify your account.</p>
                 <button class="cmp-auth-btn js-send-otp-btn">Send OTP</button>
                 <a href="#" class="cmp-auth-bottom-link js-go-login">Back to Login</a>
@@ -70,6 +73,17 @@
 
                 <button class="cmp-auth-btn js-signup-submit-btn">Sign Up</button>
                 <a href="#" class="cmp-auth-bottom-link js-go-login">Existing User? Log in</a>
+            </div>
+            <div class="cmp-auth-view js-view-reset-pass" style="display: none;">
+                <p style="color: #878787; font-size: 14px; margin-bottom: 20px;">Please enter your new password.</p>
+                
+                <input type="password" placeholder="New Password *" class="cmp-auth-input js-reset-pass-input" required />
+                <input type="password" placeholder="Re-enter New Password *" class="cmp-auth-input js-reset-reenter-pass-input" required />
+                
+                <p class="js-reset-pass-error-msg" style="color: red; font-size: 12px; margin-top: -15px; margin-bottom: 20px; display: none;">Passwords do not match</p>
+                
+                <button class="cmp-auth-btn js-reset-submit-btn">Save Password</button>
+                <a href="#" class="cmp-auth-bottom-link js-go-login">Back to Login</a>
             </div>
         </div>
     </div>

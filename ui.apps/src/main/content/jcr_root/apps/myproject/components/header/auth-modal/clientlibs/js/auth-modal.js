@@ -15,6 +15,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const authTitle = document.querySelector(".js-auth-title");
     const authDesc = document.querySelector(".js-auth-desc");
 
+    const viewResetPass = document.querySelector(".js-view-reset-pass");
+
     const hideAllViews = () => {
         const allViews = modal.querySelectorAll(".cmp-auth-view");
         allViews.forEach(v => {
@@ -61,6 +63,10 @@ document.addEventListener("DOMContentLoaded", () => {
         viewForgotMobile.style.display = "flex";
         authTitle.textContent = "Reset Password";
         authDesc.textContent = "Enter your mobile number to receive a verification OTP";
+        // Reset field and error message
+        document.querySelector(".js-forgot-mobile-input").value = "";
+        const errorMsg = document.querySelector(".js-forgot-error-msg");
+        if(errorMsg) errorMsg.style.display = "none";
     };
 
     const showForgotOtpView = () => {
@@ -68,6 +74,18 @@ document.addEventListener("DOMContentLoaded", () => {
         viewForgotOtp.style.display = "flex";
         authTitle.textContent = "Verify OTP";
         authDesc.textContent = "Enter the 6-digit OTP sent to your mobile";
+    };
+
+    const showResetPassView = () => {
+        hideAllViews();
+        viewResetPass.style.display = "flex";
+        authTitle.textContent = "Create New Password";
+        authDesc.textContent = "Set a strong new password for your account";
+        // Reset fields when this view opens
+        document.querySelector(".js-reset-pass-input").value = "";
+        document.querySelector(".js-reset-reenter-pass-input").value = "";
+        const errorMsg = document.querySelector(".js-reset-pass-error-msg");
+        if(errorMsg) errorMsg.style.display = "none";
     };
 
     const closeModal = () => {
@@ -97,7 +115,7 @@ document.addEventListener("DOMContentLoaded", () => {
         link.addEventListener("click", (e) => { e.preventDefault(); showLoginView(); });
     });
 
-    // --- LOGIN BUTTON LOGIC WITH DB VERIFICATION ---
+    // --- LOGIN BUTTON LOGIC ---
     const loginSubmitBtn = document.querySelector(".js-login-submit-btn");
     if (loginSubmitBtn) {
         loginSubmitBtn.addEventListener("click", () => {
@@ -130,9 +148,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         localStorage.setItem("isUserLoggedIn", "true"); 
                         window.dispatchEvent(new CustomEvent("authStatusChanged")); 
                         closeModal(); 
-                        // Login success alert removed here
                     } else {
-                        // Login failed alert removed here
                         console.log("Login Failed: Invalid Email/Mobile or Password.");
                     }
                 })
@@ -157,31 +173,94 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
+    // 🌟 NAYA LOGIC: SEND OTP BUTTON (FORGOT PASSWORD) 🌟
     const sendOtpBtn = document.querySelector(".js-send-otp-btn");
+    const forgotErrorMsg = document.querySelector(".js-forgot-error-msg");
+
     if (sendOtpBtn) {
         sendOtpBtn.addEventListener("click", () => {
             const mobileVal = document.querySelector(".js-forgot-mobile-input").value.trim();
             if (mobileVal.length >= 10) {
-                sendOtpBtn.textContent = "Sending OTP...";
-                setTimeout(() => {
-                    // TESTING OTP POPUP ADDED HERE
-                    alert("TESTING MODE OTP: 123456"); 
+                sendOtpBtn.textContent = "Checking...";
+                sendOtpBtn.disabled = true;
+                if(forgotErrorMsg) forgotErrorMsg.style.display = "none";
+
+                fetch('/libs/granite/csrf/token.json')
+                .then(response => response.json())
+                .then(tokenData => {
+                    const csrfToken = tokenData.token;
+                    
+                    // Step 1: Check Database mein User exist karta hai ya nahi
+                    const checkData = new URLSearchParams();
+                    checkData.append("mobile", mobileVal);
+                    
+                    return fetch('/bin/checkUser', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'CSRF-Token': csrfToken
+                        },
+                        body: checkData.toString()
+                    })
+                    .then(res => res.json())
+                    .then(checkResult => {
+                        if (checkResult.status === "exists") {
+                            sendOtpBtn.textContent = "Sending OTP...";
+                            
+                            // Step 2: User exist karta hai, ab OTP Handler ko call karo
+                            const otpData = new URLSearchParams();
+                            otpData.append("action", "generate");
+                            otpData.append("mobile", mobileVal);
+                            
+                            return fetch('/bin/otpHandler', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/x-www-form-urlencoded',
+                                    'CSRF-Token': csrfToken
+                                },
+                                body: otpData.toString()
+                            }).then(r => r.json());
+                        } else {
+                            // User database mein nahi mila
+                            throw new Error("USER_NOT_FOUND");
+                        }
+                    });
+                })
+                .then(otpResponse => {
+                    if (otpResponse && otpResponse.status === "success") {
+                        alert("TESTING MODE OTP: " + otpResponse.otp);
+                        showForgotOtpView(); 
+                    } else if (otpResponse) {
+                        console.log("Failed to send OTP.");
+                    }
+                })
+                .catch(error => {
+                    if (error.message === "USER_NOT_FOUND") {
+                        if(forgotErrorMsg) forgotErrorMsg.style.display = "block"; // Show red highlight message
+                    } else {
+                        console.error('Error during forgot password process:', error);
+                    }
+                })
+                .finally(() => {
                     sendOtpBtn.textContent = "Send OTP";
-                    showForgotOtpView(); 
-                }, 1000);
+                    sendOtpBtn.disabled = false;
+                });
+
             } else {
-                alert("Please enter a valid mobile number");
+                alert("Please enter a valid 10-digit mobile number");
             }
         });
     }
 
+    // --- VERIFY FORGOT PASSWORD OTP ---
     const verifyForgotOtpBtn = document.querySelector(".js-verify-forgot-otp-btn");
     if (verifyForgotOtpBtn) {
         verifyForgotOtpBtn.addEventListener("click", () => {
             const otpVal = document.querySelector(".js-forgot-otp-input").value.trim();
             if (otpVal.length === 6) {
-                // Success alert removed here
-                showLoginView(); 
+                // OTP verify API logic can go here...
+                // OTP Sahi hone par Login ki jagah Password Change view dikhao
+                showResetPassView(); 
             } else {
                 alert("Please enter a 6-digit OTP.");
             }
@@ -218,7 +297,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 .then(response => response.json())
                 .then(data => {
                     if (data.status === "success") {
-                        // TESTING MODE OTP ALERT KEPT AS REQUESTED
                         alert("TESTING MODE OTP: " + data.otp); 
                         showRegisterOtpView(); 
                     } else {
@@ -273,13 +351,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 .then(response => response.json())
                 .then(data => {
                     if (data.status === "success") {
-                        // Success alert removed here
                         if(detailsMobileInput) {
                             detailsMobileInput.value = mobileVal; 
                         }
                         showDetailsView(); 
                     } else {
-                        // Failed alert removed here
                         console.log("Incorrect OTP. Please try again.");
                     }
                 })
@@ -379,7 +455,6 @@ document.addEventListener("DOMContentLoaded", () => {
             })
             .then(data => {
                 if (data.status === "success") {
-                    // Registration success alert removed here
                     fnameInput.value = "";
                     if(mnameInput) mnameInput.value = "";
                     lnameInput.value = "";
@@ -391,7 +466,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     
                     showLoginView(); 
                 } else {
-                    // Registration failed alert removed here
                     console.log("Registration Failed: " + data.message);
                 }
             })
@@ -401,6 +475,75 @@ document.addEventListener("DOMContentLoaded", () => {
             .finally(() => {
                 signUpSubmitBtn.textContent = "Sign Up";
                 signUpSubmitBtn.disabled = false;
+            });
+        });
+    }
+
+    // --- RESET PASSWORD DB LOGIC ---
+    const resetPassInput = document.querySelector(".js-reset-pass-input");
+    const resetReenterPassInput = document.querySelector(".js-reset-reenter-pass-input");
+    const resetPassErrorMsg = document.querySelector(".js-reset-pass-error-msg");
+    const resetSubmitBtn = document.querySelector(".js-reset-submit-btn");
+
+    if (resetSubmitBtn) {
+        const validateResetPasswords = () => {
+            if (resetReenterPassInput.value !== "" && resetReenterPassInput.value !== resetPassInput.value) {
+                resetPassErrorMsg.style.display = "block";
+            } else {
+                resetPassErrorMsg.style.display = "none";
+            }
+        };
+
+        resetPassInput.addEventListener("input", validateResetPasswords);
+        resetReenterPassInput.addEventListener("input", validateResetPasswords);
+
+        resetSubmitBtn.addEventListener("click", () => {
+            const newPass = resetPassInput.value.trim();
+            const reenterPass = resetReenterPassInput.value.trim();
+            const mobileVal = document.querySelector(".js-forgot-mobile-input").value.trim();
+
+            if (newPass === "" || reenterPass === "") {
+                alert("Please fill in both password fields.");
+                return;
+            }
+
+            if (newPass !== reenterPass) {
+                resetPassErrorMsg.style.display = "block";
+                return;
+            }
+
+            resetSubmitBtn.textContent = "Updating...";
+            resetSubmitBtn.disabled = true;
+
+            const formData = new URLSearchParams();
+            formData.append("mobile", mobileVal);
+            formData.append("newPassword", newPass);
+
+            fetch('/libs/granite/csrf/token.json')
+            .then(response => response.json())
+            .then(tokenData => {
+                return fetch('/bin/resetPassword', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'CSRF-Token': tokenData.token
+                    },
+                    body: formData.toString()
+                });
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "success") {
+                    alert("Password updated successfully! Please login.");
+                    showLoginView();
+                } else {
+                    console.log("Failed to update password.");
+                }
+            })
+            .catch(error => console.error('Password Update Error:', error))
+            .finally(() => {
+                resetSubmitBtn.textContent = "Save Password";
+                resetSubmitBtn.disabled = false;
             });
         });
     }
