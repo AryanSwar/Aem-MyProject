@@ -35,6 +35,10 @@ document.addEventListener("DOMContentLoaded", () => {
         viewLogin.style.display = "flex";
         authTitle.textContent = "Login";
         authDesc.textContent = "Get access to your Orders, Wishlist and Recommendations";
+        
+        // Reset login fields
+        document.getElementById("login-mobile-input").value = "";
+        document.getElementById("login-pass-input").value = "";
     };
 
     const showVerifyView = () => {
@@ -63,7 +67,6 @@ document.addEventListener("DOMContentLoaded", () => {
         viewForgotMobile.style.display = "flex";
         authTitle.textContent = "Reset Password";
         authDesc.textContent = "Enter your mobile number to receive a verification OTP";
-        // Reset field and error message
         document.querySelector(".js-forgot-mobile-input").value = "";
         const errorMsg = document.querySelector(".js-forgot-error-msg");
         if(errorMsg) errorMsg.style.display = "none";
@@ -81,7 +84,6 @@ document.addEventListener("DOMContentLoaded", () => {
         viewResetPass.style.display = "flex";
         authTitle.textContent = "Create New Password";
         authDesc.textContent = "Set a strong new password for your account";
-        // Reset fields when this view opens
         document.querySelector(".js-reset-pass-input").value = "";
         document.querySelector(".js-reset-reenter-pass-input").value = "";
         const errorMsg = document.querySelector(".js-reset-pass-error-msg");
@@ -115,53 +117,76 @@ document.addEventListener("DOMContentLoaded", () => {
         link.addEventListener("click", (e) => { e.preventDefault(); showLoginView(); });
     });
 
+    // 🌟 LOGOUT LOGIC 🌟
+    document.addEventListener("click", (e) => {
+        if (e.target.closest(".js-logout-btn")) {
+            e.preventDefault();
+            localStorage.setItem("isUserLoggedIn", "false");
+            localStorage.removeItem("userMobile");
+            window.dispatchEvent(new CustomEvent("authStatusChanged"));
+            alert("You have been logged out.");
+        }
+    });
+
     // --- LOGIN BUTTON LOGIC ---
     const loginSubmitBtn = document.querySelector(".js-login-submit-btn");
     if (loginSubmitBtn) {
         loginSubmitBtn.addEventListener("click", () => {
-            const identifier = document.getElementById("login-email-input").value.trim();
+            // 🌟 UPDATE: Changed ID to login-mobile-input
+            const identifier = document.getElementById("login-mobile-input").value.trim();
             const pass = document.getElementById("login-pass-input").value.trim();
             
-            if (identifier !== "" && pass !== "") {
-                loginSubmitBtn.textContent = "Logging in...";
-                loginSubmitBtn.disabled = true;
-
-                const loginData = new URLSearchParams();
-                loginData.append("identifier", identifier); 
-                loginData.append("password", pass);
-
-                fetch('/libs/granite/csrf/token.json')
-                .then(response => response.json())
-                .then(tokenData => {
-                    return fetch('/bin/loginUser', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded',
-                            'CSRF-Token': tokenData.token
-                        },
-                        body: loginData.toString()
-                    });
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === "success") {
-                        localStorage.setItem("isUserLoggedIn", "true"); 
-                        window.dispatchEvent(new CustomEvent("authStatusChanged")); 
-                        closeModal(); 
-                    } else {
-                        console.log("Login Failed: Invalid Email/Mobile or Password.");
-                    }
-                })
-                .catch(error => {
-                    console.error('Login Error:', error);
-                })
-                .finally(() => {
-                    loginSubmitBtn.textContent = "Login";
-                    loginSubmitBtn.disabled = false;
-                });
-            } else {
-                alert("Please enter both Email/Mobile and Password.");
+            if (identifier === "" || pass === "") {
+                alert("Please enter both Mobile Number and Password.");
+                return;
             }
+
+            // 🌟 UPDATE: Strict mobile number validation added
+            if (identifier.length !== 10 || isNaN(identifier)) {
+                alert("Please enter a valid 10-digit Mobile Number.");
+                return;
+            }
+
+            loginSubmitBtn.textContent = "Logging in...";
+            loginSubmitBtn.disabled = true;
+
+            const loginData = new URLSearchParams();
+            loginData.append("identifier", identifier); 
+            loginData.append("password", pass);
+
+            fetch('/libs/granite/csrf/token.json')
+            .then(response => response.json())
+            .then(tokenData => {
+                return fetch('/bin/loginUser', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'CSRF-Token': tokenData.token
+                    },
+                    body: loginData.toString()
+                });
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "success") {
+                    localStorage.setItem("isUserLoggedIn", "true"); 
+                    
+                    // 🌟 UPDATE: Email logic removed. Seedha mobile number save hoga.
+                    localStorage.setItem("userMobile", identifier); 
+                    
+                    window.dispatchEvent(new CustomEvent("authStatusChanged")); 
+                    closeModal(); 
+                } else {
+                    alert("Login Failed: Invalid Mobile Number or Password.");
+                }
+            })
+            .catch(error => {
+                console.error('Login Error:', error);
+            })
+            .finally(() => {
+                loginSubmitBtn.textContent = "Login";
+                loginSubmitBtn.disabled = false;
+            });
         });
     }
 
@@ -173,7 +198,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // 🌟 NAYA LOGIC: SEND OTP BUTTON (FORGOT PASSWORD) 🌟
     const sendOtpBtn = document.querySelector(".js-send-otp-btn");
     const forgotErrorMsg = document.querySelector(".js-forgot-error-msg");
 
@@ -190,7 +214,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 .then(tokenData => {
                     const csrfToken = tokenData.token;
                     
-                    // Step 1: Check Database mein User exist karta hai ya nahi
                     const checkData = new URLSearchParams();
                     checkData.append("mobile", mobileVal);
                     
@@ -207,7 +230,6 @@ document.addEventListener("DOMContentLoaded", () => {
                         if (checkResult.status === "exists") {
                             sendOtpBtn.textContent = "Sending OTP...";
                             
-                            // Step 2: User exist karta hai, ab OTP Handler ko call karo
                             const otpData = new URLSearchParams();
                             otpData.append("action", "generate");
                             otpData.append("mobile", mobileVal);
@@ -221,7 +243,6 @@ document.addEventListener("DOMContentLoaded", () => {
                                 body: otpData.toString()
                             }).then(r => r.json());
                         } else {
-                            // User database mein nahi mila
                             throw new Error("USER_NOT_FOUND");
                         }
                     });
@@ -236,7 +257,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 })
                 .catch(error => {
                     if (error.message === "USER_NOT_FOUND") {
-                        if(forgotErrorMsg) forgotErrorMsg.style.display = "block"; // Show red highlight message
+                        if(forgotErrorMsg) forgotErrorMsg.style.display = "block"; 
                     } else {
                         console.error('Error during forgot password process:', error);
                     }
@@ -252,14 +273,11 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // --- VERIFY FORGOT PASSWORD OTP ---
     const verifyForgotOtpBtn = document.querySelector(".js-verify-forgot-otp-btn");
     if (verifyForgotOtpBtn) {
         verifyForgotOtpBtn.addEventListener("click", () => {
             const otpVal = document.querySelector(".js-forgot-otp-input").value.trim();
             if (otpVal.length === 6) {
-                // OTP verify API logic can go here...
-                // OTP Sahi hone par Login ki jagah Password Change view dikhao
                 showResetPassView(); 
             } else {
                 alert("Please enter a 6-digit OTP.");
@@ -267,7 +285,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // --- SEND OTP FOR REGISTRATION (STEP 1) ---
+    // --- SEND OTP FOR REGISTRATION ---
     const verifyBtn = document.querySelector(".js-verify-btn");
     const mobileInput = document.querySelector(".js-mobile-input");
     
@@ -310,14 +328,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     verifyBtn.textContent = "Send OTP";
                     verifyBtn.disabled = false;
                 });
-
             } else {
                 alert("Please enter a valid 10-digit mobile number");
             }
         });
     }
 
-    // --- VERIFY THE GENERATED OTP (STEP 2) ---
     const verifyRegisterOtpBtn = document.querySelector(".js-verify-register-otp-btn");
     const registerOtpInput = document.querySelector(".js-register-otp-input");
     const detailsMobileInput = document.querySelector(".js-details-mobile-input"); 
@@ -359,26 +375,22 @@ document.addEventListener("DOMContentLoaded", () => {
                         console.log("Incorrect OTP. Please try again.");
                     }
                 })
-                .catch(error => {
-                    console.error('OTP Verification Error:', error);
-                })
+                .catch(error => console.error('OTP Verification Error:', error))
                 .finally(() => {
                     verifyRegisterOtpBtn.textContent = "Verify OTP";
                     verifyRegisterOtpBtn.disabled = false;
                 });
-
             } else {
                 alert("Please enter the 6-digit OTP.");
             }
         });
     }
 
-    // --- CREATE ACCOUNT VALIDATION & DB LOGIC (STEP 3) ---
+    // --- CREATE ACCOUNT VALIDATION & DB LOGIC ---
     const createPassInput = document.querySelector(".js-create-pass-input");
     const reenterPassInput = document.querySelector(".js-reenter-pass-input");
     const passErrorMsg = document.querySelector(".js-pass-error-msg");
     const signUpSubmitBtn = document.querySelector(".js-signup-submit-btn");
-
     const fnameInput = document.querySelector(".js-fname-input");
     const mnameInput = document.querySelector(".js-mname-input"); 
     const lnameInput = document.querySelector(".js-lname-input");
@@ -386,21 +398,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const dobInput = document.querySelector(".cmp-auth-input[type='date']"); 
 
     if (createPassInput && reenterPassInput && passErrorMsg && signUpSubmitBtn) {
-        
         reenterPassInput.addEventListener("input", () => {
-            if (reenterPassInput.value !== "" && reenterPassInput.value !== createPassInput.value) {
-                passErrorMsg.style.display = "block";
-            } else {
-                passErrorMsg.style.display = "none";
-            }
+            passErrorMsg.style.display = (reenterPassInput.value !== "" && reenterPassInput.value !== createPassInput.value) ? "block" : "none";
         });
-
         createPassInput.addEventListener("input", () => {
-            if (reenterPassInput.value !== "" && reenterPassInput.value !== createPassInput.value) {
-                passErrorMsg.style.display = "block";
-            } else {
-                passErrorMsg.style.display = "none";
-            }
+            passErrorMsg.style.display = (reenterPassInput.value !== "" && reenterPassInput.value !== createPassInput.value) ? "block" : "none";
         });
 
         signUpSubmitBtn.addEventListener("click", () => {
@@ -414,17 +416,15 @@ document.addEventListener("DOMContentLoaded", () => {
             const mobileNumber = detailsMobileInput.value; 
 
             if (fname === "" || lname === "" || email === "" || pass1 === "" || pass2 === "") {
-                alert("Please fill out all mandatory fields (First Name, Last Name, Email, and Passwords).");
+                alert("Please fill out all mandatory fields.");
                 return; 
             }
-
             if (pass1 !== pass2) {
                 passErrorMsg.style.display = "block";
                 return; 
             }
 
             passErrorMsg.style.display = "none";
-
             signUpSubmitBtn.textContent = "Registering...";
             signUpSubmitBtn.disabled = true;
 
@@ -463,15 +463,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     reenterPassInput.value = "";
                     if(dobInput) dobInput.value = "";
                     if(detailsMobileInput) detailsMobileInput.value = "";
-                    
                     showLoginView(); 
                 } else {
                     console.log("Registration Failed: " + data.message);
                 }
             })
-            .catch(error => {
-                console.error('Error during registration:', error);
-            })
+            .catch(error => console.error('Error during registration:', error))
             .finally(() => {
                 signUpSubmitBtn.textContent = "Sign Up";
                 signUpSubmitBtn.disabled = false;
@@ -487,11 +484,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (resetSubmitBtn) {
         const validateResetPasswords = () => {
-            if (resetReenterPassInput.value !== "" && resetReenterPassInput.value !== resetPassInput.value) {
-                resetPassErrorMsg.style.display = "block";
-            } else {
-                resetPassErrorMsg.style.display = "none";
-            }
+            resetPassErrorMsg.style.display = (resetReenterPassInput.value !== "" && resetReenterPassInput.value !== resetPassInput.value) ? "block" : "none";
         };
 
         resetPassInput.addEventListener("input", validateResetPasswords);
@@ -506,7 +499,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 alert("Please fill in both password fields.");
                 return;
             }
-
             if (newPass !== reenterPass) {
                 resetPassErrorMsg.style.display = "block";
                 return;
