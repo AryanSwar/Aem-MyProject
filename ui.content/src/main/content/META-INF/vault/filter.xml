@@ -19,4 +19,7 @@
     <filter root="/conf/global/settings/workflow/models/dynamic-content-approval"/> <!--for workflow model-->
 
     <filter root="/conf/global/settings/workflow/launcher/config/myproject-product-launcher"/> <!--for launcher dynamic content approval-->
+
+    <filter root="/conf/global/settings/dam/adminui-extension/metadataschema/Custom-Enterprise-DAM-Schema"/> <!--for custom enterprise dam schema metadata-->
+
 </workspaceFilter>
