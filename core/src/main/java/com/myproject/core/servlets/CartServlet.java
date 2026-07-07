@@ -57,9 +57,13 @@ public class CartServlet extends SlingAllMethodsServlet {
                 try (ResultSet rs = pstmt.executeQuery()) {
                     if (rs.next()) {
                         String cartDataStr = rs.getString("cart_data");
+                        // Safety check: Agar null ho toh empty array dein
+                        if (cartDataStr == null || cartDataStr.trim().isEmpty()) {
+                            cartDataStr = "[]";
+                        }
                         response.getWriter().write("{\"status\":\"success\", \"cartData\":" + cartDataStr + "}");
                     } else {
-                        // Empty array for new users
+                            // Empty array for new users
                         response.getWriter().write("{\"status\":\"success\", \"cartData\":[]}");
                     }
                 }
@@ -70,7 +74,6 @@ public class CartServlet extends SlingAllMethodsServlet {
             response.getWriter().write("{\"status\":\"error\"}");
         }
     }
-
     // Save/Update Cart
     @Override
     protected void doPost(SlingHttpServletRequest request, SlingHttpServletResponse response) throws IOException {
@@ -93,7 +96,7 @@ public class CartServlet extends SlingAllMethodsServlet {
             try (Connection connection = ((DataSource) dataSourcePool.getDataSource("my-postgres-ds")).getConnection()) {
                 // Upsert Query: Agar data exist karta hai toh update, nahi toh insert
                 String sql = "INSERT INTO user_carts (mobile_number, cart_data) VALUES (?, ?::jsonb) " +
-                             "ON CONFLICT (mobile_number) DO UPDATE SET cart_data = EXCLUDED.cart_data";
+                             "ON CONFLICT (mobile_number) DO UPDATE SET cart_data = EXCLUDED.cart_data, updated_at = CURRENT_TIMESTAMP";
                 
                 try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
                     pstmt.setString(1, mobile);
