@@ -10,6 +10,8 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.framework.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+// 🌟 BCrypt Import Added
+import org.mindrot.jbcrypt.BCrypt; 
 
 import javax.servlet.Servlet;
 import javax.sql.DataSource;
@@ -40,7 +42,7 @@ public class RegisterUserServlet extends SlingAllMethodsServlet {
         String email = request.getParameter("email");
         String dob = request.getParameter("dob");
         String password = request.getParameter("password"); 
-        String mobileNumber = request.getParameter("mobileNumber"); // 🌟 Fetch mobile number
+        String mobileNumber = request.getParameter("mobileNumber");
 
         if (firstName == null || lastName == null || email == null || password == null || mobileNumber == null) {
             response.setStatus(400);
@@ -53,7 +55,9 @@ public class RegisterUserServlet extends SlingAllMethodsServlet {
             DataSource dataSource = (DataSource) dataSourcePool.getDataSource("my-postgres-ds");
             connection = dataSource.getConnection();
 
-            // 🌟 UPDATE: Added mobile_number to the SQL query
+            // 🌟 BCrypt: Password Hashing with Salt (Cost Factor 12 is standard)
+            String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt(12));
+
             String sql = "INSERT INTO e_commerce_users (first_name, middle_name, last_name, email, dob, password, mobile_number) VALUES (?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement pstmt = connection.prepareStatement(sql);
             pstmt.setString(1, firstName);
@@ -67,8 +71,9 @@ public class RegisterUserServlet extends SlingAllMethodsServlet {
                 pstmt.setNull(5, java.sql.Types.DATE);
             }
             
-            pstmt.setString(6, password);
-            pstmt.setString(7, mobileNumber); // 🌟 Set mobile parameter
+            // 🌟 Save Hashed Password Instead of Plain Text
+            pstmt.setString(6, hashedPassword);
+            pstmt.setString(7, mobileNumber); 
 
             int rowsAffected = pstmt.executeUpdate();
 

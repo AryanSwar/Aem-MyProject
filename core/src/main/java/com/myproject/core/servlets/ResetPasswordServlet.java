@@ -10,6 +10,8 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.framework.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+// 🌟 BCrypt Import Added
+import org.mindrot.jbcrypt.BCrypt; 
 
 import javax.servlet.Servlet;
 import javax.sql.DataSource;
@@ -48,9 +50,14 @@ public class ResetPasswordServlet extends SlingAllMethodsServlet {
             DataSource dataSource = (DataSource) dataSourcePool.getDataSource("my-postgres-ds");
             connection = dataSource.getConnection();
 
+            // 🌟 BCrypt: Hash the NEW password before saving to DB
+            String hashedNewPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt(12));
+
             String sql = "UPDATE e_commerce_users SET password = ? WHERE mobile_number = ?";
             PreparedStatement pstmt = connection.prepareStatement(sql);
-            pstmt.setString(1, newPassword); // Tip: Humesha production me password encrypt/hash karna chahiye
+            
+            // 🌟 Set the newly Hashed Password
+            pstmt.setString(1, hashedNewPassword); 
             pstmt.setString(2, mobile);
 
             int rowsAffected = pstmt.executeUpdate();

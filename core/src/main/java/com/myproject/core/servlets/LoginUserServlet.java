@@ -10,6 +10,8 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.framework.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+// 🌟 BCrypt Import Added
+import org.mindrot.jbcrypt.BCrypt; 
 
 import javax.servlet.Servlet;
 import javax.sql.DataSource;
@@ -35,7 +37,7 @@ public class LoginUserServlet extends SlingAllMethodsServlet {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
-        String identifier = request.getParameter("identifier"); // Ye Email ya Mobile kuch bhi ho sakta hai
+        String identifier = request.getParameter("identifier"); 
         String password = request.getParameter("password");
 
         if (identifier == null || password == null || identifier.isEmpty() || password.isEmpty()) {
@@ -49,21 +51,27 @@ public class LoginUserServlet extends SlingAllMethodsServlet {
             DataSource dataSource = (DataSource) dataSourcePool.getDataSource("my-postgres-ds");
             connection = dataSource.getConnection();
 
-            // SQL Query jo Email OR Mobile_number dono match karegi
-            String sql = "SELECT id, first_name FROM e_commerce_users WHERE (email = ? OR mobile_number = ?) AND password = ?";
+            // 🌟 UPDATE: Removed "AND password = ?" from SQL. We now fetch the hash to verify it in Java.
+            String sql = "SELECT id, first_name, password FROM e_commerce_users WHERE mobile_number = ?";
             PreparedStatement pstmt = connection.prepareStatement(sql);
             pstmt.setString(1, identifier);
-            pstmt.setString(2, identifier);
-            pstmt.setString(3, password);
+            // pstmt.setString(2, identifier);
 
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
-                // Agar record mil gaya matlab user genuine hai
-                response.setStatus(200);
-                response.getWriter().write("{\"status\":\"success\", \"message\":\"User logged in successfully\"}");
+                // 🌟 Fetch the stored Hash from Database
+                String storedHashedPassword = rs.getString("password");
+                
+                // 🌟 BCrypt Check: Compares plain password with stored Hash (Extracts salt automatically)
+                if (BCrypt.checkpw(password, storedHashedPassword)) {
+                    response.setStatus(200);
+                    response.getWriter().write("{\"status\":\"success\", \"message\":\"User logged in successfully\"}");
+                } else {
+                    response.setStatus(401);
+                    response.getWriter().write("{\"status\":\"error\", \"message\":\"Invalid Credentials\"}");
+                }
             } else {
-                // Koi record nahi mila matlab galat email/mobile ya password hai
                 response.setStatus(401);
                 response.getWriter().write("{\"status\":\"error\", \"message\":\"Invalid Credentials\"}");
             }
