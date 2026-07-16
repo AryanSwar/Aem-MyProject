@@ -1,0 +1,5 @@
+{
+  "targetBasePath": "/content/dam/myproject/ow",
+  "allowedUploadPath": "/content/dam/myproject/ow/upload",
+  "restrictedGroupId": "ow-uploads-users"
+}
