@@ -1,0 +1,5 @@
+{
+  "user.mapping": [
+    "myproject.core:myproject-service-user=myproject-service-user"
+  ]
+}
